@@ -14,7 +14,14 @@ function b64u(input: ArrayBuffer | Uint8Array): string {
 }
 
 // A chave vem do ambiente. Sem ela, nenhuma sessão é válida (admin desligado).
-const secret = () => process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD || "";
+// Preferência: SESSION_SECRET. Sem ela, mistura a senha com a DATABASE_URL (longa e aleatória),
+// para que uma senha fraca não possa ser descoberta por tentativa a partir de um cookie copiado.
+const secret = () => {
+  const senha = process.env.ADMIN_PASSWORD || "";
+  if (process.env.SESSION_SECRET) return process.env.SESSION_SECRET;
+  const db = process.env.DATABASE_URL || "";
+  return senha ? (db ? `${db}|${senha}` : senha) : "";
+};
 
 async function hmac(data: string): Promise<string> {
   const key = await crypto.subtle.importKey("raw", enc.encode(secret()), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
