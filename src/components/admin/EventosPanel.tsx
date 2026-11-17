@@ -60,7 +60,8 @@ export default function EventosPanel({
         setEditando(id);
         if (extra) await api(`/api/admin/eventos/${id}`, { method: "PATCH", body: JSON.stringify(extra) });
       } else {
-        await api(`/api/admin/eventos/${id}`, { method: "PATCH", body: JSON.stringify({ ...form, ...extra }) });
+        const r = await api<{ evento: EventoAdmin }>(`/api/admin/eventos/${id}`, { method: "PATCH", body: JSON.stringify({ ...form, ...extra }) });
+        set("mapaEmbed", r.evento.mapaEmbed);
       }
       await recarregar();
       setMsg({ tipo: "ok", texto });
@@ -173,10 +174,22 @@ export default function EventosPanel({
             <Campo k="local" label="Local" className="md:col-span-2" />
             <Campo k="endereco" label="Endereço" className="md:col-span-2" />
             <Campo k="cidade" label="Cidade" dica="Ex.: Maringá, PR. Usada para o pin do mapa." />
-            <Campo k="mapaEmbed" label="Link do mapa (opcional)" dica="Maps > Compartilhar > Incorporar. Cole só o endereço do src do iframe." />
+            <Campo k="mapaEmbed" label="Mapa do Google (opcional)" dica="Abra o local no Google Maps e cole aqui o link da barra de endereço (ou o link de Compartilhar). O site converte sozinho." className="md:col-span-2" />
             <Campo k="whatsappUrl" label="Link do grupo do WhatsApp" dica="https://chat.whatsapp.com/… Quem entra na lista é levado para cá." className="md:col-span-2" />
             <Campo k="youtubeId" label="ID do vídeo no YouTube (depois da session)" dica="Os 11 caracteres após v= no link. Aparece na seção Sessions." className="md:col-span-2" />
           </div>
+
+          {form.mapaEmbed.startsWith("https://www.google.com/maps/embed") && (
+            <div>
+              <p className={rotulo}>Pré-visualização do mapa</p>
+              <iframe
+                title="Pré-visualização do mapa"
+                src={form.mapaEmbed}
+                loading="lazy"
+                className="map-dark mt-3 h-52 w-full max-w-xl border border-line"
+              />
+            </div>
+          )}
 
           <div>
             <p className={rotulo}>Arte do evento</p>

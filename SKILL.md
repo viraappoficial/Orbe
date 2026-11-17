@@ -71,3 +71,10 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 - Artes enviadas ficam na tabela `artes` (até 2 MB, tipo conferido pelo conteúdo) e saem em `/api/arte/<id>`.
 - As páginas públicas são estáticas com `revalidate = 60`; o admin chama `revalidatePath` ao salvar, então a mudança aparece na hora.
 - Migrações: `db/migrate-001-campos-lista.sql`, `db/migrate-002-admin.sql`.
+
+## Mapa do evento
+- O Google **não deixa** a página comum de um local (`/maps/place/...`) aparecer dentro de outro site (erro "a conexão foi recusada"). Só o formato `https://www.google.com/maps/embed?pb=...` pode ser incorporado.
+- No painel (Eventos → Mapa do Google) pode-se colar o **link do local** (barra de endereço do Maps), um **link curto** (maps.app.goo.gl) ou o **código `<iframe>`**; `src/lib/mapa-embed.ts` converte para o formato incorporável usando as coordenadas e o ID do local do próprio link (o pin cai no estabelecimento certo).
+- Não geocodificar o endereço para pôr um pin: o resultado pode errar o trecho de uma avenida por quilômetros.
+- Sem mapa configurado, `MapaLocal` mostra um cartão com o endereço e os botões "Abrir no Google Maps" e "Como chegar".
+- Modais e a foto ampliada usam `createPortal` (na raiz do `body`) para ficarem acima de iframes e de qualquer coluna com transformação.

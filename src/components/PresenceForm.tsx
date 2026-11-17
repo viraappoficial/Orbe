@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   CONFIRMACOES,
   formatCpf,
@@ -132,7 +133,8 @@ export default function PresenceForm({
           )}
         </div>
 
-        {modal && (
+        {modal &&
+          createPortal(
           <div
             role="dialog"
             aria-modal="true"
@@ -173,7 +175,8 @@ export default function PresenceForm({
                 {comGrupo ? "Agora não" : "Fechar"}
               </button>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
       </>
     );

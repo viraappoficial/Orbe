@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getSql, mapEvento, type Row } from "@/lib/db";
 import { CAMPOS, validarEvento } from "@/lib/eventos-input";
+import { resolverMapa } from "@/lib/mapa-embed";
 
 export async function GET() {
   try {
@@ -19,6 +20,12 @@ export async function GET() {
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
   if (!body || typeof body !== "object") return NextResponse.json({ error: "Requisição inválida" }, { status: 400 });
+  // O mapa pode vir como link do local, link curto ou código <iframe>: converte para o formato incorporável.
+  if (typeof (body as Record<string, unknown>).mapaEmbed === "string") {
+    const m = await resolverMapa((body as Record<string, string>).mapaEmbed);
+    if ("erro" in m) return NextResponse.json({ error: m.erro }, { status: 400 });
+    (body as Record<string, unknown>).mapaEmbed = m.ok;
+  }
   const v = validarEvento(body as Record<string, unknown>, true);
   if ("erro" in v) return NextResponse.json({ error: v.erro }, { status: 400 });
 

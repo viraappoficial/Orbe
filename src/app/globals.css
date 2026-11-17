@@ -129,6 +129,23 @@ body {
   background: radial-gradient(ellipse 50% 60% at 72% 20%, rgba(201,151,90,.10), transparent 70%);
 }
 
+/* Cartão de localização (quando não há mapa incorporado) */
+.mapa-card { background: radial-gradient(ellipse 70% 120% at 0% 0%, rgba(201,151,90,.10), transparent 65%), rgba(255,255,255,.015); }
+.mapa-grade {
+  position: absolute; inset: 0; opacity: .5;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 38px 38px;
+  -webkit-mask-image: radial-gradient(ellipse at 90% 100%, #000 0%, transparent 70%);
+  mask-image: radial-gradient(ellipse at 90% 100%, #000 0%, transparent 70%);
+}
+.mapa-pin { position: relative; display: inline-flex; flex: none; color: var(--accent); margin-top: .15rem; animation: pinpulo 2.8s ease-in-out infinite; }
+.mapa-pin::after {
+  content: ""; position: absolute; left: 50%; bottom: -6px; width: 26px; height: 8px; margin-left: -13px; border-radius: 50%;
+  border: 1px solid var(--accent); opacity: 0; animation: pinonda 2.8s ease-out infinite;
+}
+@keyframes pinpulo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes pinonda { 0% { transform: scale(.4); opacity: .8; } 100% { transform: scale(2.4); opacity: 0; } }
+
 /* Mapa escuro: inverte o mapa claro do Google e devolve as cores */
 .map-dark { filter: invert(92%) hue-rotate(180deg) contrast(.92) saturate(.75) brightness(.95); }
 
@@ -205,6 +222,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .hero-parallax, .hero-glow { transform: none; opacity: 1; }
+  .mapa-pin, .mapa-pin::after { animation: none; }
   .shake, .login-topo, .btn-shine::after, .spinner { animation: none; }
   .login-topo { transform: none; }
   .scroll-progress { display: none; }

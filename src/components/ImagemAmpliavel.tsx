@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { createPortal } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 
 // Imagem que abre em tela cheia ao tocar/clicar. Fecha com ESC, com o X ou tocando fora.
@@ -65,7 +66,8 @@ export default function ImagemAmpliavel({
         )}
       </button>
 
-      {aberta && (
+      {aberta &&
+        createPortal(
         <div
           role="dialog"
           aria-modal="true"
@@ -92,7 +94,8 @@ export default function ImagemAmpliavel({
             sizes="100vw"
             className="h-auto max-h-[calc(100svh-1.5rem)] w-auto max-w-full object-contain"
           />
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

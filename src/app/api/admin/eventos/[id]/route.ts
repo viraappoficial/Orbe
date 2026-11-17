@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getSql, mapEvento, type Row } from "@/lib/db";
 import { CAMPOS, validarEvento } from "@/lib/eventos-input";
+import { resolverMapa } from "@/lib/mapa-embed";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -15,6 +16,12 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
   if (!UUID.test(id)) return NextResponse.json({ error: "ID inválido" }, { status: 400 });
   const body = await req.json().catch(() => null);
   if (!body || typeof body !== "object") return NextResponse.json({ error: "Requisição inválida" }, { status: 400 });
+  // O mapa pode vir como link do local, link curto ou código <iframe>: converte para o formato incorporável.
+  if (typeof (body as Record<string, unknown>).mapaEmbed === "string") {
+    const m = await resolverMapa((body as Record<string, string>).mapaEmbed);
+    if ("erro" in m) return NextResponse.json({ error: m.erro }, { status: 400 });
+    (body as Record<string, unknown>).mapaEmbed = m.ok;
+  }
   const v = validarEvento(body as Record<string, unknown>, false);
   if ("erro" in v) return NextResponse.json({ error: v.erro }, { status: 400 });
 
