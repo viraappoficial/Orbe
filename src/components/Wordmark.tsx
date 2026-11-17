@@ -8,7 +8,7 @@ export default function Wordmark({ className = "h-3 md:h-3.5" }: { className?: s
       alt="ORBE"
       width={840}
       height={105}
-      className={`w-auto ${className}`}
+      className={`w-auto shrink-0 ${className}`}
     />
   );
 }

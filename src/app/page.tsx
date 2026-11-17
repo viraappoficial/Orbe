@@ -16,14 +16,14 @@ export default function Home() {
     <main>
       <header style={{ animationDelay: "calc(var(--io, 0s) + .2s)" }} className="fadeup fixed top-0 inset-x-0 z-10 flex justify-between items-center px-6 md:px-12 py-6 text-xs tracking-[0.35em] uppercase bg-gradient-to-b from-black to-transparent">
         <TransitionLink href="/" className="block"><Wordmark /></TransitionLink>
-        <nav className="flex gap-6 md:gap-10 text-muted">
+        <nav className="flex items-center gap-6 md:gap-10 text-muted whitespace-nowrap">
           {nav.map(([label, href]) =>
             href.startsWith("/") ? (
               <TransitionLink key={href} href={href} className="hover:text-white transition-colors">
                 {label}
               </TransitionLink>
             ) : (
-              <a key={href} href={href} className="hover:text-white transition-colors">
+              <a key={href} href={href} className="hidden md:inline hover:text-white transition-colors">
                 {label}
               </a>
             )
@@ -34,15 +34,15 @@ export default function Home() {
       <section className="relative min-h-screen flex flex-col items-center justify-center px-6 text-center overflow-hidden">
         <div className="hero-glow" aria-hidden="true" />
         <Image
-          src="/logo.png"
+          src="/logo-transparent.png"
           alt="ORBE"
-          width={1536}
-          height={1024}
+          width={909}
+          height={608}
           priority
           style={{ animationDelay: "calc(var(--io, 0s) - .15s)" }}
-          className="logo-glow fadeup relative w-full max-w-3xl h-auto -mt-10 -mb-16 md:-mb-24"
+          className="logo-glow fadeup relative h-auto w-[min(88vw,34rem)]"
         />
-        <p style={{ animationDelay: "calc(var(--io, 0s) + .35s)" }} className="fadeup relative mt-4 text-xs md:text-sm tracking-[0.4em] uppercase text-muted">
+        <p style={{ animationDelay: "calc(var(--io, 0s) + .35s)" }} className="fadeup relative mt-10 text-xs md:text-sm tracking-[0.4em] uppercase text-muted">
           Música · Atmosfera · Conexões
         </p>
         <TransitionLink

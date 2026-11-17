@@ -20,10 +20,10 @@ export default function Intro() {
     <div className="intro" aria-hidden="true" onClick={skip}>
       <div className="intro-inner">
         <Image
-          src="/logo.png"
+          src="/logo-transparent.png"
           alt=""
-          width={1536}
-          height={1024}
+          width={909}
+          height={608}
           priority
           className="intro-logo"
         />
