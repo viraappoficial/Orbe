@@ -78,3 +78,13 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 - Não geocodificar o endereço para pôr um pin: o resultado pode errar o trecho de uma avenida por quilômetros.
 - Sem mapa configurado, `MapaLocal` mostra um cartão com o endereço e os botões "Abrir no Google Maps" e "Como chegar".
 - Modais e a foto ampliada usam `createPortal` (na raiz do `body`) para ficarem acima de iframes e de qualquer coluna com transformação.
+
+## Importar respostas do Google Forms
+- Painel → Lista → **Importar planilha**: aceita o CSV baixado do Google Planilhas (`Arquivo > Fazer download > .csv`). Mostra uma **prévia** (novas, já na lista, linhas com problema) e só grava ao confirmar. API: `POST /api/admin/importar` (`confirmar: false` = prévia). Lógica em `src/lib/importar.ts`.
+- Colunas reconhecidas pelo nome do cabeçalho: nome, telefone/WhatsApp, CPF, confirmação, carimbo de data/hora. A planilha perde o zero da frente do CPF, e a importação devolve os zeros.
+- Mesmas regras do formulário (CPF válido, WhatsApp com DDD, nome completo). Quem já está na lista (mesmo CPF e evento) é atualizado, não duplicado, então repetir a importação é seguro.
+- O CSV tem CPF: não commitar, não deixar em pastas do projeto, apagar depois de importar. A planilha do Google compartilhada por link expõe os CPFs; restringir o compartilhamento depois.
+
+## Janelas sobre iframes
+- Enquanto a foto ampliada ou o aviso do WhatsApp está aberto, `useOverlayAberto` (`src/lib/overlay.ts`) esconde os iframes (mapa, vídeos) com a classe `overlay-aberto` em `<html>`. Alguns navegadores desenham iframes de outro site por cima de qualquer `z-index`.
+- As páginas públicas são geradas no build e renovam a cada 60 s; num build local sem banco aparece o plano B (cartão de local) até a primeira renovação.

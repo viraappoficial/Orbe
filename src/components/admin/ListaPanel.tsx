@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { api, type EventoAdmin, type Inscrito } from "./api";
+import ImportarPanel from "./ImportarPanel";
 
 const ROTULO: Record<string, string> = { sim: "Confirmou", talvez: "Ainda não confirma", nao: "Não vai" };
 const COR: Record<string, string> = { sim: "text-accent", talvez: "text-white", nao: "text-muted" };
@@ -20,6 +21,7 @@ export default function ListaPanel({
   const [filtro, setFiltro] = useState("todos");
   const [msg, setMsg] = useState("");
   const [trocando, setTrocando] = useState(false);
+  const [importando, setImportando] = useState(false);
 
   const evento = eventos.find((e) => e.id === eventoId);
 
@@ -160,13 +162,34 @@ export default function ListaPanel({
           <option value="talvez">Ainda não confirmam</option>
           <option value="nao">Não vão</option>
         </select>
-        <a
-          href={`/api/admin/inscricoes/export?evento=${eventoId}`}
-          className="border border-white px-5 py-3 text-center text-xs uppercase tracking-[0.25em] transition-colors hover:bg-white hover:text-black md:ml-auto"
-        >
-          Exportar CSV (com CPF)
-        </a>
+        <div className="flex flex-col gap-3 sm:flex-row md:ml-auto">
+          <button
+            type="button"
+            onClick={() => setImportando((v) => !v)}
+            aria-expanded={importando}
+            className="border border-white px-5 py-3 text-center text-xs uppercase tracking-[0.25em] transition-colors hover:bg-white hover:text-black"
+          >
+            Importar planilha
+          </button>
+          <a
+            href={`/api/admin/inscricoes/export?evento=${eventoId}`}
+            className="border border-white px-5 py-3 text-center text-xs uppercase tracking-[0.25em] transition-colors hover:bg-white hover:text-black"
+          >
+            Exportar CSV (com CPF)
+          </a>
+        </div>
       </div>
+
+      {importando && evento && (
+        <ImportarPanel
+          eventoId={evento.id}
+          eventoNome={`${evento.titulo} · ${evento.dj}`}
+          aoConcluir={() => {
+            carregar();
+            recarregar();
+          }}
+        />
+      )}
 
       {visiveis.length === 0 ? (
         <p className="py-10 text-center text-muted">{inscritos.length ? "Ninguém corresponde ao filtro." : "Ninguém se inscreveu ainda."}</p>

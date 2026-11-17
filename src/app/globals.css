@@ -198,6 +198,9 @@ body {
   30%, 50%, 70% { transform: translateX(-7px); } 40%, 60% { transform: translateX(7px); }
 }
 
+/* Com uma janela aberta (foto ampliada, aviso), os quadros externos somem para não passarem por cima. */
+.overlay-aberto iframe { visibility: hidden; }
+
 /* Rolagem */
 :root { --hero-p: 0; --page-p: 0; }
 .hero-parallax {

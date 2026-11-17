@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { createPortal } from "react-dom";
+import { useOverlayAberto } from "@/lib/overlay";
 import { useEffect, useRef, useState } from "react";
 
 // Imagem que abre em tela cheia ao tocar/clicar. Fecha com ESC, com o X ou tocando fora.
@@ -28,6 +29,7 @@ export default function ImagemAmpliavel({
 }) {
   const [aberta, setAberta] = useState(false);
   const gatilho = useRef<HTMLButtonElement>(null);
+  useOverlayAberto(aberta);
 
   useEffect(() => {
     if (!aberta) return;

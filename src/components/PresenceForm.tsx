@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useOverlayAberto } from "@/lib/overlay";
 import {
   CONFIRMACOES,
   formatCpf,
@@ -49,6 +50,7 @@ export default function PresenceForm({
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState("");
   const [modal, setModal] = useState(false);
+  useOverlayAberto(modal);
   const botaoGrupo = useRef<HTMLAnchorElement>(null);
   const botaoFechar = useRef<HTMLButtonElement>(null);
 
