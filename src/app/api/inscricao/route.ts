@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { neon } from "@neondatabase/serverless";
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
@@ -17,17 +17,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Preencha nome e e-mail válidos" }, { status: 400 });
   }
 
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
+  const url = process.env.DATABASE_URL;
+  if (!url) {
     return NextResponse.json({ error: "Lista ainda não configurada" }, { status: 503 });
   }
 
-  const supabase = createClient(url, key);
-  const { error } = await supabase
-    .from("inscricoes")
-    .upsert({ nome, email, instagram, tipo }, { onConflict: "email" });
-
-  if (error) return NextResponse.json({ error: "Não foi possível salvar" }, { status: 500 });
+  try {
+    const sql = neon(url);
+    await sql`
+      insert into inscricoes (nome, email, instagram, tipo)
+      values (${nome}, ${email}, ${instagram}, ${tipo})
+      on conflict (email) do update
+        set nome = excluded.nome, instagram = excluded.instagram, tipo = excluded.tipo
+    `;
+  } catch {
+    return NextResponse.json({ error: "Não foi possível salvar" }, { status: 500 });
+  }
   return NextResponse.json({ ok: true });
 }

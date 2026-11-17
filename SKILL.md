@@ -1,6 +1,6 @@
 ---
 name: orbe-site
-description: Contexto e convenções do site da ORBE (selo e comunidade de live sessions de DJs). Use ao editar o site, cadastrar sessions, mexer na lista de presença, no banco (Supabase) ou no deploy (Vercel).
+description: Contexto e convenções do site da ORBE (selo e comunidade de live sessions de DJs). Use ao editar o site, cadastrar sessions, mexer na lista de presença, no banco (Neon) ou no deploy (Vercel).
 ---
 
 # ORBE: site
@@ -12,7 +12,7 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 
 ## Stack
 - Next.js 15 (App Router) + TypeScript + Tailwind CSS 4
-- Supabase (Postgres) para a lista de presença
+- Neon (Postgres serverless) para a lista de presença
 - Vercel para hospedagem, com deploy automático a cada push na `main`
 
 ## Identidade visual
@@ -30,7 +30,7 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 | Página da lista (link da bio do Instagram) | `src/app/lista/page.tsx` |
 | Formulário da lista | `src/components/PresenceForm.tsx` |
 | API do formulário | `src/app/api/inscricao/route.ts` |
-| Esquema do banco | `supabase/schema.sql` |
+| Esquema do banco | `db/schema.sql` |
 | Variáveis de ambiente (modelo) | `.env.example` |
 
 ## Tarefas comuns
@@ -44,12 +44,12 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 - O formulário envia para `POST /api/inscricao`, que valida e grava na tabela `inscricoes` (upsert por e-mail).
 - Campos: nome, e-mail, instagram, tipo (`publico`, `dj` ou `parceiro`).
 - Há um honeypot (`website`) contra spam. Não remova.
-- A tabela tem RLS ligado e **sem policies**: só o servidor, com a service role, lê e escreve.
-- Variáveis necessárias (Vercel e `.env.local`): `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`.
+- Só o servidor acessa o banco, via `DATABASE_URL` (Neon). Nunca expor ao client.
+- Variável necessária (Vercel e `.env.local`): `DATABASE_URL`.
 - Sem essas variáveis a API responde 503 ("Lista ainda não configurada").
 
 ## Regras
-- A `SUPABASE_SERVICE_ROLE_KEY` nunca vai para o código, para o repo nem para o client. Só em variável de ambiente do servidor.
+- A `DATABASE_URL` nunca vai para o código, para o repo nem para o client. Só em variável de ambiente do servidor.
 - Antes de subir: `npm run build` precisa passar.
 - Dados pessoais dos inscritos não entram em logs, commits nem na conversa.
 - Confirme com o dono do projeto antes de mudar a identidade visual (cores, fonte, logo).
