@@ -44,3 +44,14 @@ export function formatPhone(raw: string): string {
 
 export const CONFIRMACOES = ["sim", "talvez", "nao"] as const;
 export type Confirmacao = (typeof CONFIRMACOES)[number];
+
+/**
+ * Instagram: aceita "@fulano", "fulano" ou o link do perfil e devolve só o usuário.
+ * "" = vazio (campo opcional); null = formato inválido.
+ */
+export function normalizeInstagram(raw: string): string | null {
+  let h = raw.trim();
+  if (!h) return "";
+  h = h.replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").split(/[/?#]/)[0].replace(/^@/, "");
+  return /^[A-Za-z0-9._]{1,30}$/.test(h) ? h : null;
+}

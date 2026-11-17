@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   CONFIRMACOES,
   formatCpf,
+  normalizeInstagram,
   formatPhone,
   validCpf,
   validPhone,
@@ -12,7 +13,7 @@ import {
 
 type Status = "idle" | "loading" | "ok" | "error";
 type Fields = { nome: string; telefone: string; cpf: string; instagram: string; confirmacao: "" | Confirmacao };
-type Errors = Partial<Record<"nome" | "telefone" | "cpf" | "confirmacao", string>>;
+type Errors = Partial<Record<"nome" | "telefone" | "cpf" | "instagram" | "confirmacao", string>>;
 
 const WA_DELAY = 5;
 
@@ -28,6 +29,7 @@ function validate(f: Fields): Errors {
     e.nome = "Digite seu nome completo.";
   if (!validPhone(f.telefone)) e.telefone = "Digite o WhatsApp com DDD, como (00) 90000-0000.";
   if (!validCpf(f.cpf)) e.cpf = "CPF inválido. Confira os 11 números.";
+  if (normalizeInstagram(f.instagram) === null) e.instagram = "Use só o nome de usuário, como @seuperfil.";
   if (!f.confirmacao) e.confirmacao = "Escolha uma opção.";
   return e;
 }
@@ -68,7 +70,7 @@ export default function PresenceForm({
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setTouched({ nome: true, telefone: true, cpf: true, confirmacao: true });
+    setTouched({ nome: true, telefone: true, cpf: true, instagram: true, confirmacao: true });
     if (Object.keys(errors).length) return;
     setStatus("loading");
     setServerError("");
@@ -182,8 +184,11 @@ export default function PresenceForm({
           id="instagram" name="instagram" autoComplete="off" autoCapitalize="none" placeholder="@seuperfil"
           value={values.instagram}
           onChange={(e) => set("instagram", e.target.value)}
+          onBlur={() => touch("instagram")}
+          aria-invalid={!!show("instagram")} aria-describedby={show("instagram") ? "instagram-erro" : undefined}
           className={field + " placeholder:text-[#555]"}
         />
+        {show("instagram") && <p id="instagram-erro" className={err}>⚠ {errors.instagram}</p>}
       </div>
 
       <fieldset aria-describedby={show("confirmacao") ? "confirmacao-erro" : undefined}>

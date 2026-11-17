@@ -195,7 +195,21 @@ export default function ListaPanel({
                     </a>
                   </td>
                   <td className="px-4 py-3 text-muted">{i.cpf}</td>
-                  <td className="px-4 py-3 text-muted">{i.instagram ? `@${i.instagram}` : "—"}</td>
+                  <td className="px-4 py-3">
+                    {/^[A-Za-z0-9._]{1,30}$/.test(i.instagram) ? (
+                      <a
+                        href={`https://www.instagram.com/${encodeURIComponent(i.instagram)}/`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Abrir o Instagram de ${i.nome}`}
+                        className="underline-offset-4 hover:text-accent hover:underline"
+                      >
+                        @{i.instagram}
+                      </a>
+                    ) : (
+                      <span className="text-muted">{i.instagram ? i.instagram : "—"}</span>
+                    )}
+                  </td>
                   <td className={`px-4 py-3 ${COR[i.confirmacao] ?? ""}`}>{ROTULO[i.confirmacao] ?? "—"}</td>
                   <td className="px-4 py-3 text-muted">
                     {new Date(i.criadoEm).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", timeStyle: "short" })}

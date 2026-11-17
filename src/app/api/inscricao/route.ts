@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { neon } from "@neondatabase/serverless";
-import { CONFIRMACOES, normalizePhone, onlyDigits, validCpf, validPhone } from "@/lib/validate";
+import { CONFIRMACOES, normalizeInstagram, normalizePhone, onlyDigits, validCpf, validPhone } from "@/lib/validate";
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
@@ -12,11 +12,12 @@ export async function POST(req: Request) {
   const nome = String(body.nome ?? "").trim().replace(/\s+/g, " ").slice(0, 120);
   const telefone = normalizePhone(String(body.telefone ?? ""));
   const cpf = onlyDigits(String(body.cpf ?? ""));
-  const instagram = String(body.instagram ?? "").trim().replace(/^@/, "").slice(0, 60);
+  const instagram = normalizeInstagram(String(body.instagram ?? ""));
   const confirmacao = String(body.confirmacao ?? "");
 
   if (nome.split(" ").length < 2) return bad("Digite seu nome completo.");
   if (!validPhone(telefone)) return bad("Digite o WhatsApp com DDD.");
+  if (instagram === null) return bad("Instagram inválido. Use só o nome de usuário, como @seuperfil.");
   if (!validCpf(cpf)) return bad("CPF inválido. Confira os 11 números.");
   if (!(CONFIRMACOES as readonly string[]).includes(confirmacao)) return bad("Escolha uma opção de confirmação.");
 
