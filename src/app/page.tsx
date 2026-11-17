@@ -40,10 +40,10 @@ export default function Home() {
           width={909}
           height={608}
           priority
-          style={{ animationDelay: "calc(var(--io, 0s) - .15s)" }}
+          style={{ animationDelay: "calc(var(--io, 0s) - .3s)" }}
           className="logo-glow fadeup relative h-auto w-[min(88vw,34rem)]"
         />
-        <p style={{ animationDelay: "calc(var(--io, 0s) + .35s)" }} className="fadeup relative mt-10 text-xs md:text-sm tracking-[0.4em] uppercase text-muted">
+        <p style={{ animationDelay: "calc(var(--io, 0s) + .1s)" }} className="fadeup relative mt-10 text-xs md:text-sm tracking-[0.4em] uppercase text-muted">
           Música · Atmosfera · Conexões
         </p>
         <TransitionLink
@@ -54,7 +54,7 @@ export default function Home() {
         </TransitionLink>
         </div>
         <span
-          style={{ animationDelay: "calc(var(--io, 0s) + 1.4s)" }}
+          style={{ animationDelay: "calc(var(--io, 0s) + .9s)" }}
           className="fadeup absolute bottom-8 left-1/2 -translate-x-1/2"
           aria-hidden="true"
         >

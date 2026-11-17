@@ -29,7 +29,7 @@ const bootScript = `(function(){var d=document.documentElement;d.classList.add("
 try{var rm=matchMedia("(prefers-reduced-motion: reduce)").matches;
 var seen=sessionStorage.getItem("orbe-intro");
 if(rm||seen){d.dataset.intro="skip";d.style.setProperty("--io","0s")}
-else{d.dataset.intro="play";d.style.setProperty("--io",location.pathname==="/lista"?"1.4s":"2.4s")}
+else{d.dataset.intro="play";d.style.setProperty("--io",location.pathname==="/lista"?"1s":"1.6s")}
 }catch(e){d.dataset.intro="skip";d.style.setProperty("--io","0s")}
 setTimeout(function(){d.classList.add("reveal-all")},5000)})();`;
 
