@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "skills": {
+    "ui-design": {
+      "source": "odysseyalive/claude-workforce",
+      "commit": "d52b6f087d3ea139ac715bc00ba43d3a70edca89",
+      "sourceType": "github",
+      "skillPath": "workforce/skills/ui-design/SKILL.md",
+      "computedHash": "befae5938a0988d6fff043f115fc0eb23268054f08a4beacdf69f4fa2eab1de7"
+    }
+  }
+}
