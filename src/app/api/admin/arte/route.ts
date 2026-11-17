@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSql } from "@/lib/db";
 
-const MAX_BYTES = 2 * 1024 * 1024; // 2 MB
+const MAX_BYTES = 3 * 1024 * 1024; // 3 MB (o painel já reduz antes de enviar; a Vercel aceita até 4,5 MB)
 
 // Confere o tipo real pelo conteúdo do arquivo, não pelo nome ou pelo que o navegador diz.
 function tipoReal(b: Uint8Array): string | null {
@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   const form = await req.formData().catch(() => null);
   const file = form?.get("file");
   if (!(file instanceof File)) return NextResponse.json({ error: "Envie uma imagem" }, { status: 400 });
-  if (file.size > MAX_BYTES) return NextResponse.json({ error: "A imagem passa de 2 MB" }, { status: 413 });
+  if (file.size > MAX_BYTES) return NextResponse.json({ error: "A imagem passa de 3 MB" }, { status: 413 });
 
   const bytes = new Uint8Array(await file.arrayBuffer());
   const mime = tipoReal(bytes);

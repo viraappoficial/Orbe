@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { api, type EventoAdmin } from "./api";
+import { prepararImagem } from "./comprimir";
 
 type Form = {
   titulo: string; dj: string; data: string; dia: string; hora: string; local: string; endereco: string;
@@ -101,14 +102,17 @@ export default function EventosPanel({
   async function enviarArte(file: File | undefined) {
     if (!file) return;
     setMsg(null);
-    if (file.size > 2 * 1024 * 1024) return setMsg({ tipo: "erro", texto: "A imagem passa de 2 MB. Reduza e tente de novo." });
-    const dados = new FormData();
-    dados.append("file", file);
+    if (file.size > 40 * 1024 * 1024) return setMsg({ tipo: "erro", texto: "Esse arquivo passa de 40 MB. Use uma imagem menor." });
     setOcupado(true);
     try {
+      setMsg({ tipo: "ok", texto: "Preparando a imagem…" });
+      const { arquivo, reduzida } = await prepararImagem(file);
+      const dados = new FormData();
+      dados.append("file", arquivo);
       const r = await api<{ url: string }>("/api/admin/arte", { method: "POST", body: dados });
       set("arteUrl", r.url);
-      setMsg({ tipo: "ok", texto: "Arte enviada. Clique em Salvar para aplicar." });
+      const kb = Math.round(arquivo.size / 1024);
+      setMsg({ tipo: "ok", texto: `Arte enviada${reduzida ? ` (reduzida para ${kb} KB)` : ""}. Clique em Salvar para aplicar.` });
     } catch (e) {
       setMsg({ tipo: "erro", texto: e instanceof Error ? e.message : "Erro ao enviar a imagem" });
     } finally {
@@ -187,7 +191,7 @@ export default function EventosPanel({
                   Enviar imagem
                   <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={(e) => enviarArte(e.target.files?.[0])} />
                 </label>
-                <p className="text-xs text-muted">JPG, PNG ou WebP, até 2 MB. Proporção 4:5 (ex.: 1080×1350) fica melhor.</p>
+                <p className="text-xs text-muted">JPG, PNG ou WebP. Imagens grandes são reduzidas sozinhas. Proporção 4:5 (ex.: 1080×1350) fica melhor.</p>
                 <Campo k="arteUrl" label="Ou o endereço da imagem" dica="Preenchido sozinho ao enviar." />
               </div>
             </div>
