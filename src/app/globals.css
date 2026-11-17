@@ -240,3 +240,12 @@ select option:disabled { color: #777; }
   .js .reveal { opacity: 1; transform: none; filter: none; transition: none; }
   .line-draw { transform: scaleX(1); transition: none; }
 }
+
+/* Nada pode passar da largura da tela. No celular, um elemento largo demais (aqui, as animações de entrada
+   que começam deslocadas para os lados) alarga a "tela virtual": o menu fixo sai do centro e a página
+   fica rolável para os lados. `clip` não cria rolagem (não quebra o `sticky`); `hidden` é o plano B. */
+html, body { overflow-x: hidden; overflow-x: clip; }
+@media (max-width: 767px) {
+  .js .reveal-left { transform: translateX(-20px); }
+  .js .reveal-right { transform: translateX(20px); }
+}
