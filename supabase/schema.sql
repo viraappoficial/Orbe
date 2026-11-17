@@ -3,7 +3,7 @@ create table if not exists public.inscricoes (
   nome text not null,
   email text not null unique,
   instagram text,
-  tipo text not null default 'publico' check (tipo in ('publico','dj')),
+  tipo text not null default 'publico' check (tipo in ('publico','dj','parceiro')),
   created_at timestamptz not null default now()
 );
 

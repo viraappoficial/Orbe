@@ -16,7 +16,7 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 - Vercel para hospedagem, com deploy automático a cada push na `main`
 
 ## Identidade visual
-- Fundo preto puro (`#000`), texto branco e cinza. Sem outras cores por padrão.
+- Fundo preto puro (`#000`), texto branco e cinza. **Bronze (`--accent`, `#c9975a`) é o único destaque**, só em data, botão principal e linhas. Decisão registrada em `.claude/design/direction.md`.
 - Fonte Jost (leve). Títulos em caixa alta com espaçamento largo (`tracking-[0.3em]` ou mais).
 - Linhas finas, muito espaço vazio, animações lentas e sutis.
 - Logo em `public/logo.png` (fundo preto, mesclado ao fundo do site).
@@ -27,6 +27,7 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 |---|---|
 | Home e seções | `src/app/page.tsx` |
 | Dados da próxima session, sessions passadas e links das redes | `src/data/sessions.ts` |
+| Página da lista (link da bio do Instagram) | `src/app/lista/page.tsx` |
 | Formulário da lista | `src/components/PresenceForm.tsx` |
 | API do formulário | `src/app/api/inscricao/route.ts` |
 | Esquema do banco | `supabase/schema.sql` |
@@ -41,7 +42,7 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 
 ## Lista de presença
 - O formulário envia para `POST /api/inscricao`, que valida e grava na tabela `inscricoes` (upsert por e-mail).
-- Campos: nome, e-mail, instagram, tipo (`publico` ou `dj`).
+- Campos: nome, e-mail, instagram, tipo (`publico`, `dj` ou `parceiro`).
 - Há um honeypot (`website`) contra spam. Não remova.
 - A tabela tem RLS ligado e **sem policies**: só o servidor, com a service role, lê e escreve.
 - Variáveis necessárias (Vercel e `.env.local`): `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`.

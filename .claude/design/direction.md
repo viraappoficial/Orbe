@@ -2,7 +2,7 @@
 
 *Written 2026-11-17 by `/ui-design direct`. Appended to, never rewritten.*
 
-**Status: direção de layout EM ESPERA.** As respostas de caso estão fechadas; a escolha entre as direções A, B e C foi adiada pelo usuário ("Segurar por enquanto"). A próxima rodada de `direct` nesta superfície parte daqui.
+**Status: direção definida em 2026-11-17 (ver "Decisão: dois links" no fim).** Antes disso a escolha entre A, B e C estava em espera.
 
 ## The answers, in the user's words
 > "Lotar a lista da próxima session (Recomendado)" — trabalho principal da home
@@ -59,3 +59,17 @@ Resposta do usuário: "Segurar por enquanto".
 
 ## Licence note
 Referências 1 e 2: somente leitura, nada é copiado. Logo e arte são do próprio projeto.
+
+## Decisão: dois links (2026-11-17)
+> "ent mas tbm quero mostrar a home e apresentar o trabalho acho que a ideia vai ser dois links um da lista (formulario) e outro da home"
+
+O usuário não escolheu A, B ou C: pediu **duas páginas com trabalhos diferentes**.
+- `/lista` (link da bio do Instagram): LAND + FORM focada em lotar a lista. Arte da session, data em bronze, local, "vagas limitadas" e o formulário. Pensada para o celular.
+- `/` (home): apresenta o selo e o trabalho (opção B: logo primeiro, próxima session como seção, depois O Orbe e Sessions). O botão "Entrar na lista" leva a `/lista`.
+
+| Screen | Primary situation | Secondary | ERG rules that apply |
+|---|---|---|---|
+| `/` | LAND | none | ERG-LAND-01, ERG-LAND-02, ERG-LAND-03, ERG-LAND-04 |
+| `/lista` | FORM | LAND | ERG-FORM-01, ERG-FORM-02, ERG-FORM-03, ERG-FORM-04, ERG-FORM-05, ERG-LAND-04 |
+
+Aplicado nesta rodada: bronze `#c9975a` como `--accent` (amostrado a olho do anel da arte), formulário com label visível, validação inline ao sair do campo, erro com ícone e texto, campo "Eu sou" com opção de parceiro. Resolve os alertas de ERG-FORM-01, 03 e 05 registrados acima.

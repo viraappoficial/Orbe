@@ -1,12 +1,12 @@
 import Image from "next/image";
-import PresenceForm from "@/components/PresenceForm";
+import Link from "next/link";
 import { sessions, links, proxima } from "@/data/sessions";
 
 const nav = [
   ["Próxima", "#proxima"],
   ["O Orbe", "#sobre"],
   ["Sessions", "#sessions"],
-  ["Lista", "#lista"],
+  ["Lista", "/lista"],
 ];
 
 export default function Home() {
@@ -35,12 +35,12 @@ export default function Home() {
         <p className="fadeup mt-4 text-xs md:text-sm tracking-[0.4em] uppercase text-muted [animation-delay:.6s]">
           Música · Atmosfera · Conexões
         </p>
-        <a
-          href="#lista"
-          className="fadeup mt-12 border border-white px-10 py-4 text-xs tracking-[0.3em] uppercase hover:bg-white hover:text-black transition-colors [animation-delay:1s]"
+        <Link
+          href="/lista"
+          className="fadeup mt-12 border border-white px-10 py-4 text-xs tracking-[0.3em] uppercase hover:bg-accent hover:border-accent hover:text-black transition-colors [animation-delay:1s]"
         >
           Entrar na lista
-        </a>
+        </Link>
       </section>
 
       <section id="proxima" className="border-t border-line px-6 md:px-12 py-24 md:py-32">
@@ -61,7 +61,7 @@ export default function Home() {
               {proxima.dj}
             </h3>
             <p className="mt-8 text-2xl md:text-3xl tracking-[0.2em]">
-              {proxima.data} <span className="text-muted">|</span> {proxima.hora}
+              <span className="text-accent">{proxima.data}</span> <span className="text-muted">|</span> {proxima.hora}
             </p>
             <p className="mt-6 tracking-[0.2em] uppercase">{proxima.local}</p>
             <p className="mt-2 text-sm text-muted tracking-wider uppercase">{proxima.endereco}</p>
@@ -69,12 +69,12 @@ export default function Home() {
               Vagas limitadas
             </p>
             <div>
-              <a
-                href="#lista"
+              <Link
+                href="/lista"
                 className="mt-10 inline-block border border-white px-10 py-4 text-xs tracking-[0.3em] uppercase hover:bg-white hover:text-black transition-colors"
               >
                 Colocar meu nome na lista
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -116,14 +116,6 @@ export default function Home() {
             ))}
           </div>
         )}
-      </section>
-
-      <section id="lista" className="border-t border-line px-6 py-32">
-        <div className="max-w-md mx-auto">
-          <h2 className="text-xs tracking-[0.4em] uppercase text-muted mb-4">Lista de presença</h2>
-          <p className="text-2xl mb-12">Seja avisado das próximas sessions.</p>
-          <PresenceForm />
-        </div>
       </section>
 
       <footer className="border-t border-line px-6 md:px-12 py-10 flex flex-col md:flex-row gap-4 justify-between text-xs tracking-[0.3em] uppercase text-muted">

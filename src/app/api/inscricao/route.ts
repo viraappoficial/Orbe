@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   const nome = String(body.nome ?? "").trim().slice(0, 120);
   const email = String(body.email ?? "").trim().toLowerCase().slice(0, 200);
   const instagram = String(body.instagram ?? "").trim().replace(/^@/, "").slice(0, 60);
-  const tipo = body.tipo === "dj" ? "dj" : "publico";
+  const tipo = body.tipo === "dj" ? "dj" : body.tipo === "parceiro" ? "parceiro" : "publico";
 
   if (!nome || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: "Preencha nome e e-mail válidos" }, { status: 400 });
