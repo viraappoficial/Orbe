@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   CONFIRMACOES,
   formatCpf,
@@ -14,8 +14,6 @@ import {
 type Status = "idle" | "loading" | "ok" | "error";
 type Fields = { nome: string; telefone: string; cpf: string; instagram: string; confirmacao: "" | Confirmacao };
 type Errors = Partial<Record<"nome" | "telefone" | "cpf" | "instagram" | "confirmacao", string>>;
-
-const WA_DELAY = 5;
 
 const OPCOES: Record<Confirmacao, string> = {
   sim: "Sim, confirmo minha presença",
@@ -49,19 +47,28 @@ export default function PresenceForm({
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState("");
-  const [count, setCount] = useState(WA_DELAY);
-  const [auto, setAuto] = useState(true);
+  const [modal, setModal] = useState(false);
+  const botaoGrupo = useRef<HTMLAnchorElement>(null);
+  const botaoFechar = useRef<HTMLButtonElement>(null);
 
-  // Depois de entrar na lista, leva a pessoa ao grupo do WhatsApp.
+  // Depois de entrar na lista, abre o aviso com o botão do grupo (um toque real, sem bloqueio do navegador).
   useEffect(() => {
-    if (status !== "ok" || !whatsappUrl || !auto) return;
-    if (count <= 0) {
-      window.location.href = whatsappUrl;
-      return;
-    }
-    const t = setTimeout(() => setCount((c) => c - 1), 1000);
-    return () => clearTimeout(t);
-  }, [status, whatsappUrl, auto, count]);
+    if (status === "ok") setModal(true);
+  }, [status]);
+
+  // Modal: trava a rolagem, fecha com ESC e põe o foco no botão principal.
+  useEffect(() => {
+    if (!modal) return;
+    const anterior = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setModal(false);
+    window.addEventListener("keydown", onKey);
+    (botaoGrupo.current ?? botaoFechar.current)?.focus();
+    return () => {
+      document.body.style.overflow = anterior;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [modal]);
 
   const errors = validate(values);
   const show = (k: keyof Errors) => touched[k] && errors[k];
@@ -92,41 +99,83 @@ export default function PresenceForm({
 
   if (status === "ok") {
     const vai = values.confirmacao !== "nao";
+    const comGrupo = vai && !!whatsappUrl;
+    const titulo = vai ? "Você está na lista" : "Recebemos sua resposta";
+    const Icone = (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+        <path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.7-5.4A8.4 8.4 0 1 1 21 11.5Z" />
+        <path d="M9 9.2c.3 2.6 2.6 4.9 5.8 5.8l1.3-1.5-2-1-1 .7c-.8-.4-1.6-1.2-2-2l.7-1-1-2L9 9.2Z" />
+      </svg>
+    );
     return (
-      <div role="status" className="p-2 text-center">
-        <p className="text-sm uppercase tracking-[0.3em] text-accent">
-          {vai ? "Você está na lista" : "Recebemos sua resposta"}
-        </p>
-        {whatsappUrl ? (
-          <>
-            <p className="mt-4 text-lg leading-snug">
-              Falta um passo: entre no grupo do WhatsApp para receber as informações do rolê.
+      <>
+        <div role="status" className="p-2 text-center">
+          <p className="text-sm uppercase tracking-[0.3em] text-accent">{titulo}</p>
+          {comGrupo ? (
+            <>
+              <p className="mt-4 text-lg leading-snug">Falta um passo: entre no grupo do WhatsApp para receber as informações do rolê.</p>
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-8 flex w-full items-center justify-center gap-3 bg-accent py-4 text-sm font-medium uppercase tracking-[0.25em] text-black transition-opacity hover:opacity-90"
+              >
+                {Icone} Participar do grupo
+              </a>
+            </>
+          ) : (
+            <p className="mt-3 text-muted">
+              {vai
+                ? sessionLabel ? `Nos vemos na ${sessionLabel}.` : "Avisamos você das próximas sessions."
+                : "Obrigado por avisar. Fica de olho nas próximas sessions."}
             </p>
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-8 block w-full bg-accent py-4 text-sm font-medium uppercase tracking-[0.3em] text-black transition-opacity hover:opacity-90"
-            >
-              Entrar no grupo do WhatsApp
-            </a>
-            {auto && (
-              <p className="mt-5 text-sm text-muted">
-                Abrindo o grupo em {count}s…{" "}
-                <button type="button" onClick={() => setAuto(false)} className="underline underline-offset-4 hover:text-white">
-                  Ficar aqui
-                </button>
+          )}
+        </div>
+
+        {modal && (
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-titulo"
+            onClick={() => setModal(false)}
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-black/85 px-5 py-[max(1.25rem,env(safe-area-inset-top))] backdrop-blur-sm"
+          >
+            <div onClick={(e) => e.stopPropagation()} className="page-in w-full max-w-md border border-accent bg-black p-7 text-center sm:p-10">
+              <p className="text-xs uppercase tracking-[0.35em] text-accent">{titulo}</p>
+              <h2 id="modal-titulo" className="mt-4 text-2xl uppercase leading-tight tracking-[0.12em]">
+                {comGrupo ? "Falta um passo" : vai ? "Tudo certo" : "Obrigado"}
+              </h2>
+              <p className="mt-4 text-muted">
+                {comGrupo
+                  ? "Entre no grupo do WhatsApp para receber as informações do rolê e os avisos da session."
+                  : vai
+                    ? sessionLabel ? `Seu nome está na lista da ${sessionLabel}. Nos vemos lá.` : "Seu nome está na lista."
+                    : "Obrigado por avisar. Fica de olho nas próximas sessions."}
               </p>
-            )}
-          </>
-        ) : (
-          <p className="mt-3 text-muted">
-            {vai
-              ? sessionLabel ? `Nos vemos na ${sessionLabel}.` : "Avisamos você das próximas sessions."
-              : "Obrigado por avisar. Fica de olho nas próximas sessions."}
-          </p>
+              {comGrupo && (
+                <a
+                  ref={botaoGrupo}
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setModal(false)}
+                  className="mt-8 flex w-full items-center justify-center gap-3 bg-accent py-4 text-sm font-medium uppercase tracking-[0.25em] text-black transition-opacity hover:opacity-90"
+                >
+                  {Icone} Participar do grupo
+                </a>
+              )}
+              <button
+                ref={botaoFechar}
+                type="button"
+                onClick={() => setModal(false)}
+                className={`${comGrupo ? "mt-3 border-transparent text-muted hover:text-white" : "mt-8 border-white hover:bg-white hover:text-black"} w-full border py-4 text-xs uppercase tracking-[0.25em] transition-colors`}
+              >
+                {comGrupo ? "Agora não" : "Fechar"}
+              </button>
+            </div>
+          </div>
         )}
-      </div>
+      </>
     );
   }
 

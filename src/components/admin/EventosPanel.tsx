@@ -145,6 +145,7 @@ export default function EventosPanel({
               <p className="mt-2 flex flex-wrap gap-2 text-[0.65rem] uppercase tracking-[0.2em]">
                 <span className={`border px-2 py-1 ${e.status === "publicado" ? "border-white" : "border-line text-muted"}`}>{e.status === "publicado" ? "Publicado" : "Rascunho"}</span>
                 {e.destaque && <span className="border border-accent px-2 py-1 text-accent">Próxima session</span>}
+                {e.destaque && !e.whatsappUrl && <span className="border border-[#ff8a8a] px-2 py-1 text-[#ff8a8a]">Sem link do grupo</span>}
                 {e.destaque && <span className={`border px-2 py-1 ${e.listaAberta ? "border-accent text-accent" : "border-line text-muted"}`}>Lista {e.listaAberta ? "aberta" : "fechada"}</span>}
               </p>
             </div>
