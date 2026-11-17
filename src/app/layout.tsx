@@ -12,7 +12,16 @@ const jost = Jost({
   variable: "--font-jost",
 });
 
+// Base para montar o endereço completo da imagem de prévia (WhatsApp, Instagram).
+// Em produção usa o domínio principal da Vercel; troque por NEXT_PUBLIC_SITE_URL ao ter domínio próprio.
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "http://localhost:3000");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "ORBE",
   description:
     "Selo e comunidade de live sessions de DJs, gravadas em lugares sempre diferentes.",

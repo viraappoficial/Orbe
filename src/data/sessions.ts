@@ -21,7 +21,8 @@ export const proxima = {
   hora: "16h",
   local: "Estilo Livre Bar",
   endereco: "Av. Pioneiro Alício Arantes, Campolina, 608 – Jardim Real",
-  arte: "/session-001.webp",
+  arte: "/session-001-oficial.webp",
+  og: "/session-001-og.jpg", // previa ao compartilhar o link
   dia: "20/11",
   prazo: "18/11", // prazo para confirmar presença
 };

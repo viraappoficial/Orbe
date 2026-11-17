@@ -9,7 +9,7 @@ import { proxima, grupoWhatsapp } from "@/data/sessions";
 export const metadata: Metadata = {
   title: "Lista de presença · ORBE",
   description: `${proxima.titulo} com ${proxima.dj}, ${proxima.data} às ${proxima.hora}. Vagas limitadas. Coloque seu nome na lista.`,
-  openGraph: { images: [proxima.arte] },
+  openGraph: { images: [{ url: proxima.og, width: 1080, height: 1350 }] },
 };
 
 const mapa = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
@@ -44,8 +44,8 @@ export default function Lista() {
             <Image
               src={proxima.arte}
               alt={`Orbe ${proxima.titulo}: ${proxima.dj}, ${proxima.data} às ${proxima.hora}, ${proxima.local}`}
-              width={1122}
-              height={1402}
+              width={1080}
+              height={1350}
               className="h-auto w-full border border-line shadow-[0_40px_90px_-35px_rgba(201,151,90,.45)]"
             />
           </div>
@@ -56,8 +56,8 @@ export default function Lista() {
               <Image
                 src={proxima.arte}
                 alt=""
-                width={1122}
-                height={1402}
+                width={1080}
+                height={1350}
                 priority
                 className="h-auto w-24 shrink-0 border border-line md:hidden"
               />

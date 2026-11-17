@@ -70,8 +70,8 @@ export default function Home() {
                 <Image
                   src={proxima.arte}
                   alt={`Orbe ${proxima.titulo} — ${proxima.dj}`}
-                  width={1122}
-                  height={1402}
+                  width={1080}
+                  height={1350}
                   className="reveal-img w-full h-auto"
                 />
               </div>
