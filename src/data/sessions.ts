@@ -16,13 +16,13 @@ export const links = {
 
 export const proxima = {
   titulo: "Sessions 001",
-  dj: "John Monster",
+  dj: "Johnm",
   data: "20.11",
   hora: "16h",
   local: "Estilo Livre Bar",
   endereco: "Av. Pioneiro Alício Arantes, Campolina, 608 – Jardim Real",
-  arte: "/session-001-oficial.webp",
-  og: "/session-001-og.jpg", // previa ao compartilhar o link
+  arte: "/session-001-johnm.webp",
+  og: "/session-001-johnm-og.jpg", // previa ao compartilhar o link
   cidade: "Maringá, PR", // usada no mapa; sem ela o pin pode cair no lugar errado
   mapaEmbed: "", // opcional: URL do iframe copiada em Maps > Compartilhar > Incorporar um mapa
   dia: "20/11",
