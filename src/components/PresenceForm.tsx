@@ -18,9 +18,9 @@ type Fields = { nome: string; telefone: string; cpf: string; instagram: string; 
 type Errors = Partial<Record<"nome" | "telefone" | "cpf" | "instagram" | "confirmacao", string>>;
 
 const OPCOES: Record<Confirmacao, string> = {
-  sim: "Sim, confirmo minha presença",
-  talvez: "Ainda não consigo confirmar",
-  nao: "Não poderei participar",
+  sim: "Sim, confirmo",
+  talvez: "Ainda não consigo",
+  nao: "Não poderei",
 };
 
 function validate(f: Fields): Errors {
@@ -190,7 +190,7 @@ export default function PresenceForm({
   const err = "mt-2 text-sm text-[#ff8a8a]";
 
   return (
-    <form onSubmit={onSubmit} noValidate className="space-y-8">
+    <form onSubmit={onSubmit} noValidate className="space-y-4 md:space-y-6">
       <div>
         <label htmlFor="nome" className={label}>Nome completo</label>
         <input
@@ -249,21 +249,17 @@ export default function PresenceForm({
         <legend className={label}>
           Você confirma sua presença{dia ? ` no dia ${dia}` : ""}?
         </legend>
-        <div className="mt-3 space-y-2">
+        <div className="mt-3 grid grid-cols-3 border border-line">
           {CONFIRMACOES.map((v) => (
-            <label
-              key={v}
-              className={`flex cursor-pointer items-center gap-3 border px-4 py-3 transition-colors ${
-                values.confirmacao === v ? "border-accent" : "border-line hover:border-[#444]"
-              }`}
-            >
+            <label key={v} className="relative cursor-pointer border-r border-line last:border-r-0">
               <input
-                type="radio" name="confirmacao" value={v} required
+                type="radio" name="confirmacao" value={v} required className="peer sr-only"
                 checked={values.confirmacao === v}
                 onChange={() => { set("confirmacao", v); touch("confirmacao"); }}
-                className="h-4 w-4 shrink-0 accent-[#c9975a]"
               />
-              <span>{OPCOES[v]}</span>
+              <span className="flex min-h-12 items-center justify-center px-2 py-3 text-center text-xs leading-snug tracking-[0.04em] text-[#bbb] transition-colors hover:text-white peer-checked:bg-accent peer-checked:font-medium peer-checked:text-black peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:-outline-offset-2 peer-focus-visible:outline-accent sm:text-sm">
+                {OPCOES[v]}
+              </span>
             </label>
           ))}
         </div>

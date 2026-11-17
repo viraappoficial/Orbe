@@ -101,3 +101,9 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 - **Funciona sem internet:** cada entrada vai para uma fila guardada no celular (`localStorage` `orbe-checkin-fila`) e é enviada quando a conexão volta; o horário gravado é o do toque. Adicionar na porta exige internet.
 - API: `GET /api/admin/checkin` (só o **final** do CPF vai para a tela), `POST /api/admin/checkin` (lote de ações, idempotente: confirmar quem já entrou não muda o horário da primeira entrada; horário do celular só vale se for plausível), `POST /api/admin/checkin/porta`.
 - Banco: `inscricoes.presente`, `checkin_em`, `origem` (`site`, `importada`, `porta`), em `db/migrate-004-checkin.sql`. O painel (aba Lista) mostra "Entraram" e a coluna Entrada; o CSV exportado inclui presença, horário e origem.
+
+## Layout da `/lista` (proposta B, escolhida pelo dono)
+- **Computador:** tela dividida. Esquerda: a arte inteira, fixa na altura da tela, ampliável, com uma barra embaixo (endereço + **Ver mapa ↗**, que abre `MapaModal`). Direita: voltar, título, etiquetas (data, local, vagas), formulário e aviso legal. Cabe numa tela de 1280×860.
+- **Celular:** miniatura da arte ao lado do título, etiquetas, formulário (botão visível sem rolar em 390×844) e o mapa recolhido numa linha **Como chegar +** (`<details>`), que abre ao tocar.
+- A confirmação de presença são **três botões lado a lado** (`Sim, confirmo` / `Ainda não consigo` / `Não poderei`), com rádios reais por baixo (teclado e leitor de tela funcionam).
+- O mapa só aparece sob demanda: `MapaModal` não usa `useOverlayAberto` porque ele esconderia o próprio iframe do mapa.
