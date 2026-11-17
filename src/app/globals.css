@@ -132,6 +132,55 @@ body {
 /* Mapa escuro: inverte o mapa claro do Google e devolve as cores */
 .map-dark { filter: invert(92%) hue-rotate(180deg) contrast(.92) saturate(.75) brightness(.95); }
 
+/* Login do admin */
+.login-form { box-shadow: 0 30px 80px -40px rgba(201,151,90,.35); }
+.login-topo {
+  position: absolute; left: -1px; right: -1px; top: -1px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  transform: scaleX(0); animation: loginTopo 1.4s ease .9s forwards;
+}
+@keyframes loginTopo { to { transform: scaleX(1); } }
+
+/* Campo com linha de bronze que acende ao focar */
+.campo-anim { position: relative; border-bottom: 1px solid var(--line); }
+.campo-anim::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--accent);
+  transform: scaleX(0); transform-origin: left; transition: transform .45s cubic-bezier(.2,.7,.2,1);
+}
+.campo-anim:focus-within::after { transform: scaleX(1); }
+.campo-anim:focus-within label { color: var(--accent); }
+.campo-anim label { transition: color .3s ease; }
+
+/* O navegador pinta o preenchimento automático de azul-claro; aqui ele fica no tema escuro. */
+.login-form input:-webkit-autofill,
+.login-form input:-webkit-autofill:hover,
+.login-form input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f5f5f5;
+  caret-color: #fff;
+  -webkit-box-shadow: 0 0 0 1000px #0a0a0a inset;
+  box-shadow: 0 0 0 1000px #0a0a0a inset;
+  transition: background-color 99999s ease-out 0s;
+}
+
+/* Brilho que passa pelo botão */
+.btn-shine { position: relative; overflow: hidden; }
+.btn-shine::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent);
+  transform: skewX(-18deg); pointer-events: none;
+}
+.btn-shine:hover::after, .btn-shine:focus-visible::after { animation: shine .9s ease; }
+@keyframes shine { to { left: 130%; } }
+
+.spinner { width: 14px; height: 14px; border: 1.5px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: giro .7s linear infinite; }
+@keyframes giro { to { transform: rotate(360deg); } }
+
+.shake { animation: tremer .45s cubic-bezier(.36,.07,.19,.97); }
+@keyframes tremer {
+  10%, 90% { transform: translateX(-2px); } 20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-7px); } 40%, 60% { transform: translateX(7px); }
+}
+
 /* Rolagem */
 :root { --hero-p: 0; --page-p: 0; }
 .hero-parallax {
@@ -156,6 +205,8 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .hero-parallax, .hero-glow { transform: none; opacity: 1; }
+  .shake, .login-topo, .btn-shine::after, .spinner { animation: none; }
+  .login-topo { transform: none; }
   .scroll-progress { display: none; }
   .intro, .curtain { display: none !important; }
   .hero-glow, .scroll-cue, .page-in, .reveal-img { animation: none; transform: none; }

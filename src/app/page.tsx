@@ -3,6 +3,7 @@ import { TransitionLink } from "@/components/PageTransition";
 import Reveal from "@/components/Reveal";
 import Wordmark from "@/components/Wordmark";
 import ImagemAmpliavel from "@/components/ImagemAmpliavel";
+import MapaLocal from "@/components/MapaLocal";
 import { getEventoAtual, getSessoesPublicadas } from "@/lib/db";
 import { links } from "@/data/sessions";
 
@@ -125,6 +126,9 @@ export default async function Home() {
                   </TransitionLink>
                 </div>
               )}
+              <div className="mt-10">
+                <MapaLocal local={ev.local} endereco={ev.endereco} cidade={ev.cidade} embed={ev.mapaEmbed || undefined} />
+              </div>
             </Reveal>
           </div>
         </section>
