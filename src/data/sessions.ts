@@ -13,3 +13,13 @@ export const links = {
   instagram: "",
   tiktok: "",
 };
+
+export const proxima = {
+  titulo: "Sessions 001",
+  dj: "John Monster",
+  data: "20.11",
+  hora: "16h",
+  local: "Estilo Livre Bar",
+  endereco: "Av. Pioneiro Alício Arantes, Campolina, 608 – Jardim Real",
+  arte: "/session-001.webp",
+};

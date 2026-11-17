@@ -1,8 +1,9 @@
 import Image from "next/image";
 import PresenceForm from "@/components/PresenceForm";
-import { sessions, links } from "@/data/sessions";
+import { sessions, links, proxima } from "@/data/sessions";
 
 const nav = [
+  ["Próxima", "#proxima"],
   ["O Orbe", "#sobre"],
   ["Sessions", "#sessions"],
   ["Lista", "#lista"],
@@ -32,7 +33,7 @@ export default function Home() {
           className="logo-glow fadeup w-full max-w-3xl h-auto -mt-10 -mb-16 md:-mb-24"
         />
         <p className="fadeup mt-4 text-xs md:text-sm tracking-[0.4em] uppercase text-muted [animation-delay:.6s]">
-          Live sessions · Lugares sempre diferentes
+          Música · Atmosfera · Conexões
         </p>
         <a
           href="#lista"
@@ -40,6 +41,43 @@ export default function Home() {
         >
           Entrar na lista
         </a>
+      </section>
+
+      <section id="proxima" className="border-t border-line px-6 md:px-12 py-24 md:py-32">
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+          <Image
+            src={proxima.arte}
+            alt={`Orbe ${proxima.titulo} — ${proxima.dj}`}
+            width={1122}
+            height={1402}
+            className="w-full h-auto border border-line"
+          />
+          <div>
+            <h2 className="text-xs tracking-[0.4em] uppercase text-muted mb-6">
+              Próxima session
+            </h2>
+            <p className="text-sm tracking-[0.35em] uppercase text-muted">{proxima.titulo}</p>
+            <h3 className="mt-3 text-4xl md:text-6xl tracking-[0.15em] uppercase leading-tight">
+              {proxima.dj}
+            </h3>
+            <p className="mt-8 text-2xl md:text-3xl tracking-[0.2em]">
+              {proxima.data} <span className="text-muted">|</span> {proxima.hora}
+            </p>
+            <p className="mt-6 tracking-[0.2em] uppercase">{proxima.local}</p>
+            <p className="mt-2 text-sm text-muted tracking-wider uppercase">{proxima.endereco}</p>
+            <p className="mt-8 inline-block border border-line px-5 py-2 text-xs tracking-[0.3em] uppercase">
+              Vagas limitadas
+            </p>
+            <div>
+              <a
+                href="#lista"
+                className="mt-10 inline-block border border-white px-10 py-4 text-xs tracking-[0.3em] uppercase hover:bg-white hover:text-black transition-colors"
+              >
+                Colocar meu nome na lista
+              </a>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="sobre" className="max-w-3xl mx-auto px-6 py-32 md:py-48">
