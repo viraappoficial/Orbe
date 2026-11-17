@@ -20,6 +20,8 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 - Fonte Jost (leve). Títulos em caixa alta com espaçamento largo (`tracking-[0.3em]` ou mais).
 - Linhas finas, muito espaço vazio, animações lentas e sutis.
 - Logo em `public/logo.png` (fundo preto, mesclado ao fundo do site).
+- **"ORBE" escrito sempre com o wordmark do logo** (`public/wordmark.png`, componente `Wordmark`), nunca em texto com fonte comum: o E do logo é desenhado diferente.
+- Animações: intro com o logo (1x por sessão, 2,4 s; 1,4 s em `/lista`), reveal ao rolar, cortina entre páginas. Tudo respeita `prefers-reduced-motion`. Duração da intro: script em `src/app/layout.tsx` (`--io`). Estilos em `src/app/globals.css`, seção "Animações".
 - Tom da copy: curto, seguro, sem exagero.
 
 ## Onde fica cada coisa
