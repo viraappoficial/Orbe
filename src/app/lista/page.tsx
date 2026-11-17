@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
+import { TransitionLink } from "@/components/PageTransition";
+import Wordmark from "@/components/Wordmark";
 import PresenceForm from "@/components/PresenceForm";
 import { proxima } from "@/data/sessions";
 
@@ -12,11 +13,11 @@ export const metadata: Metadata = {
 
 export default function Lista() {
   return (
-    <main className="min-h-screen px-6 py-10 md:py-16">
+    <main style={{ animationDelay: "calc(var(--io, 0s) - .2s)" }} className="page-in min-h-screen px-6 py-10 md:py-16">
       <div className="max-w-md mx-auto">
-        <Link href="/" className="block text-xs tracking-[0.4em] uppercase text-muted hover:text-white transition-colors">
-          ← Orbe
-        </Link>
+        <TransitionLink href="/" className="inline-flex items-center gap-3 text-xs text-muted hover:text-white transition-colors">
+          <span aria-hidden="true">←</span> <Wordmark className="h-3" />
+        </TransitionLink>
 
         <Image
           src={proxima.arte}
