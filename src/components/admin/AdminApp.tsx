@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import Wordmark from "@/components/Wordmark";
 import { api, type EventoAdmin } from "./api";
@@ -53,6 +54,7 @@ export default function AdminApp() {
           <span className="text-xs uppercase tracking-[0.35em] text-muted">Gestão</span>
         </div>
         <div className="flex items-center gap-5 text-xs uppercase tracking-[0.25em]">
+          <Link href="/admin/checkin" className="border border-accent bg-accent px-4 py-2 text-black transition-colors hover:bg-transparent hover:text-accent">Check-in</Link>
           <a href="/" target="_blank" rel="noopener noreferrer" className="text-muted hover:text-white">Ver site</a>
           <button type="button" onClick={sair} className="text-muted hover:text-white">Sair</button>
         </div>

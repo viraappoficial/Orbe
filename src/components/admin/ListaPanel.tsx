@@ -45,6 +45,7 @@ export default function ListaPanel({
       sim: inscritos.filter((i) => i.confirmacao === "sim").length,
       talvez: inscritos.filter((i) => i.confirmacao === "talvez").length,
       nao: inscritos.filter((i) => i.confirmacao === "nao").length,
+      entraram: inscritos.filter((i) => i.presente).length,
     }),
     [inscritos]
   );
@@ -133,12 +134,13 @@ export default function ListaPanel({
       )}
       {msg && <p role="status" className="text-sm text-accent">{msg}</p>}
 
-      <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <dl className="grid grid-cols-2 gap-3 md:grid-cols-5">
         {[
           ["Total", contagem.total, ""],
           ["Confirmaram", contagem.sim, "text-accent"],
           ["Ainda não confirmam", contagem.talvez, ""],
           ["Não vão", contagem.nao, "text-muted"],
+          ["Entraram", contagem.entraram, "text-accent"],
         ].map(([rotulo, n, cor]) => (
           <div key={String(rotulo)} className="border border-line p-4">
             <dt className="text-[0.65rem] uppercase tracking-[0.25em] text-muted">{rotulo}</dt>
@@ -195,10 +197,10 @@ export default function ListaPanel({
         <p className="py-10 text-center text-muted">{inscritos.length ? "Ninguém corresponde ao filtro." : "Ninguém se inscreveu ainda."}</p>
       ) : (
         <div className="overflow-x-auto border border-line">
-          <table className="w-full min-w-[44rem] text-left text-sm">
+          <table className="w-full min-w-[50rem] text-left text-sm">
             <thead>
               <tr className="border-b border-line text-[0.65rem] uppercase tracking-[0.25em] text-muted">
-                {["Nome", "WhatsApp", "CPF", "Instagram", "Confirmação", "Inscrito em", ""].map((h) => (
+                {["Nome", "WhatsApp", "CPF", "Instagram", "Confirmação", "Inscrito em", "Entrada", ""].map((h) => (
                   <th key={h} scope="col" className="px-4 py-3 font-normal">{h}</th>
                 ))}
               </tr>
@@ -236,6 +238,9 @@ export default function ListaPanel({
                   <td className={`px-4 py-3 ${COR[i.confirmacao] ?? ""}`}>{ROTULO[i.confirmacao] ?? "—"}</td>
                   <td className="px-4 py-3 text-muted">
                     {new Date(i.criadoEm).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", timeStyle: "short" })}
+                  </td>
+                  <td className={`px-4 py-3 ${i.presente ? "text-accent" : "text-muted"}`}>
+                    {i.presente ? `✓ ${new Date(i.checkinEm).toLocaleTimeString("pt-BR", { timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit" })}` : "—"}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button type="button" onClick={() => remover(i)} className="text-xs uppercase tracking-[0.2em] text-muted hover:text-[#ff8a8a]">

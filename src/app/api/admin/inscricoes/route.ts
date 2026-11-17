@@ -8,7 +8,7 @@ export async function GET(req: Request) {
   try {
     const sql = getSql();
     const rows = (await sql`
-      select id, nome, telefone, cpf, instagram, confirmacao, created_at
+      select id, nome, telefone, cpf, instagram, confirmacao, created_at, presente, checkin_em, origem
       from inscricoes
       where (${evento}::uuid is null or evento_id = ${evento}::uuid)
       order by created_at desc`) as Row[];
@@ -20,6 +20,9 @@ export async function GET(req: Request) {
         cpf: mascara(String(r.cpf ?? "")), // o CPF completo só sai no CSV
         instagram: String(r.instagram ?? ""),
         confirmacao: String(r.confirmacao ?? ""),
+        presente: r.presente === true,
+        checkinEm: r.checkin_em ? new Date(String(r.checkin_em)).toISOString() : "",
+        origem: String(r.origem ?? "site"),
         criadoEm: r.created_at ? new Date(String(r.created_at)).toISOString() : "",
       })),
     });

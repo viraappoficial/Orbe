@@ -95,3 +95,9 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 - Validação compartilhada em `src/lib/participar.ts` (formulário e servidor). `POST /api/participar` grava em `interessados` (uma linha por tipo + WhatsApp; reenviar atualiza e reabre se estava arquivado), tem honeypot e limite de 5 envios por IP a cada 10 min (`limite_envios`).
 - Admin → aba **Interessados**: filtros, marcar contatado, arquivar/reabrir, remover, chamar no WhatsApp, links de Instagram e do set, exportar CSV. O contador de novos aparece na aba.
 - Migração: `db/migrate-003-interessados.sql`.
+
+## Check-in na porta
+- `/admin/checkin` (botão **Check-in** no cabeçalho do painel): tela pensada para o celular do porteiro. Contadores (Entraram / Faltam / Na lista), busca por **nome, final do CPF ou WhatsApp** (feita no próprio aparelho, não depende de internet), botão grande **Confirmar entrada**, **Desfazer** e **Adicionar na porta** (quem não está na lista entra já presente, `origem = porta`).
+- **Funciona sem internet:** cada entrada vai para uma fila guardada no celular (`localStorage` `orbe-checkin-fila`) e é enviada quando a conexão volta; o horário gravado é o do toque. Adicionar na porta exige internet.
+- API: `GET /api/admin/checkin` (só o **final** do CPF vai para a tela), `POST /api/admin/checkin` (lote de ações, idempotente: confirmar quem já entrou não muda o horário da primeira entrada; horário do celular só vale se for plausível), `POST /api/admin/checkin/porta`.
+- Banco: `inscricoes.presente`, `checkin_em`, `origem` (`site`, `importada`, `porta`), em `db/migrate-004-checkin.sql`. O painel (aba Lista) mostra "Entraram" e a coluna Entrada; o CSV exportado inclui presença, horário e origem.
