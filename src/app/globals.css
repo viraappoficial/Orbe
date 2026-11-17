@@ -201,6 +201,12 @@ body {
 /* Com uma janela aberta (foto ampliada, aviso), os quadros externos somem para não passarem por cima. */
 .overlay-aberto iframe { visibility: hidden; }
 
+/* Seletores (<select>): a lista que abre é desenhada pelo navegador, com fundo branco por padrão.
+   Aqui ela fica escura, com o texto claro, em todo o site. */
+select { color-scheme: dark; }
+select option, select optgroup { background-color: #0a0a0a; color: #f5f5f5; }
+select option:disabled { color: #777; }
+
 /* Rolagem */
 :root { --hero-p: 0; --page-p: 0; }
 .hero-parallax {
