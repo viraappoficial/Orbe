@@ -88,3 +88,10 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 ## Janelas sobre iframes
 - Enquanto a foto ampliada ou o aviso do WhatsApp está aberto, `useOverlayAberto` (`src/lib/overlay.ts`) esconde os iframes (mapa, vídeos) com a classe `overlay-aberto` em `<html>`. Alguns navegadores desenham iframes de outro site por cima de qualquer `z-index`.
 - As páginas públicas são geradas no build e renovam a cada 60 s; num build local sem banco aparece o plano B (cartão de local) até a primeira renovação.
+
+## Faça parte do Orbe
+- Home: seção `#participe` com três caminhos: **Quero ir** (`/lista`, só se a lista estiver aberta), **Sou DJ** (`/participar?como=dj`) e **Espaço ou marca** (`/participar?como=parceiro`).
+- `/participar` (`src/components/ParticiparForm.tsx`): formulário com abas DJ / Espaço ou marca. **Sem CPF.** DJ: nome artístico, WhatsApp, Instagram, cidade, estilo, link de um set (opcional), mensagem. Espaço/marca: nome, nome do espaço, WhatsApp, Instagram (opcional), cidade, tipo de espaço, mensagem.
+- Validação compartilhada em `src/lib/participar.ts` (formulário e servidor). `POST /api/participar` grava em `interessados` (uma linha por tipo + WhatsApp; reenviar atualiza e reabre se estava arquivado), tem honeypot e limite de 5 envios por IP a cada 10 min (`limite_envios`).
+- Admin → aba **Interessados**: filtros, marcar contatado, arquivar/reabrir, remover, chamar no WhatsApp, links de Instagram e do set, exportar CSV. O contador de novos aparece na aba.
+- Migração: `db/migrate-003-interessados.sql`.

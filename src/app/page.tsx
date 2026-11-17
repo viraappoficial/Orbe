@@ -17,6 +17,7 @@ export default async function Home() {
     ...(ev ? ([["Próxima", "#proxima"]] as [string, string][]) : []),
     ["O Orbe", "#sobre"],
     ["Sessions", "#sessions"],
+    ["Participe", "#participe"],
     ...(ev?.listaAberta ? ([["Lista", "/lista"]] as [string, string][]) : []),
   ];
 
@@ -184,6 +185,51 @@ export default async function Home() {
             ))}
           </div>
         )}
+      </section>
+
+      <section id="participe" className="border-t border-line px-5 py-20 sm:px-8 md:px-12 md:py-32">
+        <div className="mx-auto max-w-5xl">
+          <Reveal>
+            <span className="line-draw mb-6" />
+            <h2 className="mb-6 text-xs uppercase tracking-[0.4em] text-muted">Faça parte</h2>
+            <p className="max-w-2xl text-2xl leading-snug md:text-4xl">Venha ser Orbe.</p>
+            <p className="mt-6 max-w-xl text-base text-muted md:text-lg">
+              O selo é feito por quem toca, por quem recebe e por quem vai. Escolha como você quer entrar.
+            </p>
+          </Reveal>
+
+          <div className="mt-12 grid gap-4 md:mt-16 md:grid-cols-3">
+            {(
+              [
+                { n: "01", t: "Quero ir", d: ev?.listaAberta ? "Entre na lista da próxima session e receba os avisos no grupo." : "A lista da próxima session ainda não abriu. Acompanhe por aqui.", href: ev?.listaAberta ? "/lista" : null, cta: "Entrar na lista" },
+                { n: "02", t: "Sou DJ", d: "Quer tocar numa session? Conte quem você é e mande um set para a gente ouvir.", href: "/participar?como=dj", cta: "Quero tocar" },
+                { n: "03", t: "Tenho um espaço ou marca", d: "Tem um lugar para receber uma session, ou quer apoiar o selo? Fale com a gente.", href: "/participar?como=parceiro", cta: "Quero apoiar" },
+              ] as const
+            ).map((c, i) => (
+              <Reveal key={c.n} delay={i * 130}>
+                {c.href ? (
+                  <TransitionLink href={c.href} className="card-participe group flex h-full flex-col border border-line p-7 transition-colors hover:border-accent sm:p-8">
+                    <span className="text-xs tracking-[0.3em] text-accent">{c.n}</span>
+                    <h3 className="mt-6 text-xl uppercase leading-snug tracking-[0.12em]">{c.t}</h3>
+                    <p className="mt-4 flex-1 text-sm leading-relaxed text-muted">{c.d}</p>
+                    <span className="mt-8 inline-flex items-center gap-3 text-xs uppercase tracking-[0.3em] transition-colors group-hover:text-accent">
+                      {c.cta}
+                      <svg width="18" height="10" viewBox="0 0 18 10" fill="none" stroke="currentColor" strokeWidth="1" className="transition-transform group-hover:translate-x-1" aria-hidden="true">
+                        <path d="M1 5h16M13 1l4 4-4 4" />
+                      </svg>
+                    </span>
+                  </TransitionLink>
+                ) : (
+                  <div className="flex h-full flex-col border border-line p-7 opacity-70 sm:p-8">
+                    <span className="text-xs tracking-[0.3em] text-muted">{c.n}</span>
+                    <h3 className="mt-6 text-xl uppercase leading-snug tracking-[0.12em]">{c.t}</h3>
+                    <p className="mt-4 flex-1 text-sm leading-relaxed text-muted">{c.d}</p>
+                  </div>
+                )}
+              </Reveal>
+            ))}
+          </div>
+        </div>
       </section>
 
       <footer className="flex flex-col justify-between gap-4 border-t border-line px-5 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-10 text-xs uppercase tracking-[0.3em] text-muted sm:px-8 md:flex-row md:px-12">

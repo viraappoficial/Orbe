@@ -23,3 +23,9 @@ export type EventoAdmin = {
 export type Inscrito = {
   id: string; nome: string; telefone: string; cpf: string; instagram: string; confirmacao: string; criadoEm: string;
 };
+
+export type Interessado = {
+  id: string; tipo: "dj" | "parceiro"; nome: string; whatsapp: string; instagram: string; cidade: string;
+  organizacao: string; categoria: string; link: string; mensagem: string;
+  status: "novo" | "contatado" | "arquivado"; criadoEm: string;
+};

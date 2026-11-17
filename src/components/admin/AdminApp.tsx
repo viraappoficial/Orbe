@@ -5,9 +5,11 @@ import Wordmark from "@/components/Wordmark";
 import { api, type EventoAdmin } from "./api";
 import ListaPanel from "./ListaPanel";
 import EventosPanel from "./EventosPanel";
+import InteressadosPanel from "./InteressadosPanel";
 
 export default function AdminApp() {
-  const [aba, setAba] = useState<"lista" | "eventos">("lista");
+  const [aba, setAba] = useState<"lista" | "eventos" | "interessados">("lista");
+  const [novos, setNovos] = useState(0);
   const [eventos, setEventos] = useState<EventoAdmin[] | null>(null);
   const [erro, setErro] = useState("");
 
@@ -30,7 +32,7 @@ export default function AdminApp() {
     window.location.href = "/admin/login";
   }
 
-  const aba_ = (id: "lista" | "eventos", rotulo: string) => (
+  const aba_ = (id: "lista" | "eventos" | "interessados", rotulo: string) => (
     <button
       type="button"
       onClick={() => setAba(id)}
@@ -59,6 +61,7 @@ export default function AdminApp() {
       <nav className="mt-8 flex gap-8 border-b border-line">
         {aba_("lista", "Lista")}
         {aba_("eventos", "Eventos")}
+        {aba_("interessados", novos > 0 ? `Interessados (${novos})` : "Interessados")}
       </nav>
 
       {erro && <p role="alert" className="mt-6 text-sm text-[#ff8a8a]">⚠ {erro}</p>}
@@ -66,6 +69,7 @@ export default function AdminApp() {
 
       {eventos && aba === "lista" && <ListaPanel eventos={eventos} recarregar={carregar} />}
       {eventos && aba === "eventos" && <EventosPanel eventos={eventos} recarregar={carregar} />}
+      {aba === "interessados" && <InteressadosPanel aoMudar={setNovos} />}
     </div>
   );
 }
