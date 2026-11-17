@@ -27,11 +27,17 @@ export async function POST(req: Request) {
 
   try {
     const sql = neon(url);
-    // Uma inscrição por CPF: reenviar atualiza a anterior (ex.: mudou a confirmação).
+    // Quem manda é o servidor: só entra se houver uma session anunciada com a lista aberta.
+    const ev = (await sql`
+      select id from eventos where destaque and status = 'publicado' and lista_aberta limit 1`) as { id: string }[];
+    if (!ev[0]) {
+      return NextResponse.json({ error: "A lista está fechada no momento." }, { status: 403 });
+    }
+    // Uma inscrição por CPF em cada evento: reenviar atualiza a anterior.
     await sql`
-      insert into inscricoes (nome, telefone, cpf, instagram, confirmacao, tipo)
-      values (${nome}, ${telefone}, ${cpf}, ${instagram}, ${confirmacao}, 'publico')
-      on conflict (cpf) where cpf is not null do update
+      insert into inscricoes (evento_id, nome, telefone, cpf, instagram, confirmacao, tipo)
+      values (${ev[0].id}::uuid, ${nome}, ${telefone}, ${cpf}, ${instagram}, ${confirmacao}, 'publico')
+      on conflict (evento_id, cpf) where cpf is not null do update
         set nome = excluded.nome, telefone = excluded.telefone,
             instagram = excluded.instagram, confirmacao = excluded.confirmacao
     `;

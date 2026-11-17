@@ -59,3 +59,15 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 - Antes de subir: `npm run build` precisa passar.
 - Dados pessoais dos inscritos não entram em logs, commits nem na conversa.
 - Confirme com o dono do projeto antes de mudar a identidade visual (cores, fonte, logo).
+
+## Gestão (admin)
+- Painel em `/admin` (login em `/admin/login`), com duas abas: **Lista** (inscritos, filtros, exportar CSV, abrir/fechar a lista) e **Eventos** (criar, editar, anunciar, despublicar, excluir, enviar a arte).
+- **Credenciais só em variáveis de ambiente na Vercel**, nunca no repo (ele é público): `ADMIN_USER` e `ADMIN_PASSWORD`. `SESSION_SECRET` é opcional (se ausente, usa a senha para assinar a sessão). Sem `ADMIN_PASSWORD` o login responde 503.
+- Proteção: `src/middleware.ts` barra `/admin` e `/api/admin` sem cookie assinado (`src/lib/auth.ts`, 12 h, httpOnly, sameSite strict); bloqueia pedidos de outra origem (CSRF); o login limita 5 erros por IP a cada 15 min (tabela `admin_tentativas`).
+- **Evento anunciado** = `status = publicado` + `destaque = true` (só um por vez). A home e a `/lista` leem esse evento do banco (`src/lib/db.ts`); se o banco falhar, usam o plano B de `src/data/sessions.ts`.
+- **Lista aberta/fechada** é decidida no servidor: `POST /api/inscricao` recusa com 403 se não houver evento anunciado com `lista_aberta`.
+- Inscrição é por evento e CPF (`inscricoes_evento_cpf_key`). Evento com inscritos não pode ser excluído, só despublicado.
+- O CPF aparece mascarado na tela do admin; o CSV traz o CPF completo. Nunca expor CPF em páginas públicas, logs ou erros.
+- Artes enviadas ficam na tabela `artes` (até 2 MB, tipo conferido pelo conteúdo) e saem em `/api/arte/<id>`.
+- As páginas públicas são estáticas com `revalidate = 60`; o admin chama `revalidatePath` ao salvar, então a mudança aparece na hora.
+- Migrações: `db/migrate-001-campos-lista.sql`, `db/migrate-002-admin.sql`.

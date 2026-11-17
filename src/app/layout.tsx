@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Jost } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import Intro from "@/components/Intro";
@@ -20,6 +20,13 @@ const siteUrl =
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : "http://localhost:3000");
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover", // usa a tela toda em celulares com notch
+  themeColor: "#000000",
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: "ORBE",
@@ -35,6 +42,7 @@ export const metadata: Metadata = {
 // Roda antes da primeira pintura: decide se a intro toca (1x por sessão,
 // nunca com "reduzir movimento") e quanto ela dura (curta em /lista).
 const bootScript = `(function(){var d=document.documentElement;d.classList.add("js");
+if(location.pathname.indexOf("/admin")===0){d.dataset.intro="skip";d.style.setProperty("--io","0s");return}
 try{var rm=matchMedia("(prefers-reduced-motion: reduce)").matches;
 var seen=sessionStorage.getItem("orbe-intro");
 if(rm||seen){d.dataset.intro="skip";d.style.setProperty("--io","0s")}

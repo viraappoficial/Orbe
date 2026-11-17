@@ -2,28 +2,40 @@ import Image from "next/image";
 import { TransitionLink } from "@/components/PageTransition";
 import Reveal from "@/components/Reveal";
 import Wordmark from "@/components/Wordmark";
-import { sessions, links, proxima } from "@/data/sessions";
+import ImagemAmpliavel from "@/components/ImagemAmpliavel";
+import { getEventoAtual, getSessoesPublicadas } from "@/lib/db";
+import { links } from "@/data/sessions";
 
-const nav = [
-  ["Próxima", "#proxima"],
-  ["O Orbe", "#sobre"],
-  ["Sessions", "#sessions"],
-  ["Lista", "/lista"],
-];
+// Regenera a cada minuto; o admin força a atualização na hora ao salvar.
+export const revalidate = 60;
 
-export default function Home() {
+export default async function Home() {
+  const [ev, sessoes] = await Promise.all([getEventoAtual(), getSessoesPublicadas()]);
+
+  const nav: [string, string][] = [
+    ...(ev ? ([["Próxima", "#proxima"]] as [string, string][]) : []),
+    ["O Orbe", "#sobre"],
+    ["Sessions", "#sessions"],
+    ...(ev?.listaAberta ? ([["Lista", "/lista"]] as [string, string][]) : []),
+  ];
+
   return (
     <main>
-      <header style={{ animationDelay: "calc(var(--io, 0s) + .2s)" }} className="site-header fadeup fixed top-0 inset-x-0 z-10 flex justify-between items-center px-6 md:px-12 py-6 text-xs tracking-[0.35em] uppercase bg-gradient-to-b from-black to-transparent">
-        <TransitionLink href="/" className="block"><Wordmark /></TransitionLink>
-        <nav className="flex items-center gap-6 md:gap-10 text-muted whitespace-nowrap">
+      <header
+        style={{ animationDelay: "calc(var(--io, 0s) + .2s)" }}
+        className="site-header fadeup fixed inset-x-0 top-0 z-10 flex items-center justify-between bg-gradient-to-b from-black to-transparent px-5 pb-4 pt-[max(1.25rem,env(safe-area-inset-top))] text-xs uppercase tracking-[0.35em] sm:px-8 md:px-12 md:pt-6"
+      >
+        <TransitionLink href="/" className="block py-2">
+          <Wordmark />
+        </TransitionLink>
+        <nav className="flex items-center gap-6 whitespace-nowrap text-muted md:gap-10">
           {nav.map(([label, href]) =>
             href.startsWith("/") ? (
-              <TransitionLink key={href} href={href} className="hover:text-white transition-colors">
+              <TransitionLink key={href} href={href} className="py-2 transition-colors hover:text-white">
                 {label}
               </TransitionLink>
             ) : (
-              <a key={href} href={href} className="hidden md:inline hover:text-white transition-colors">
+              <a key={href} href={href} className="hidden py-2 transition-colors hover:text-white md:inline">
                 {label}
               </a>
             )
@@ -31,137 +43,157 @@ export default function Home() {
         </nav>
       </header>
 
-      <section className="relative min-h-screen flex flex-col items-center justify-center px-6 text-center overflow-hidden">
+      <section className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden px-5 text-center">
         <div className="hero-glow" aria-hidden="true" />
         <div className="hero-parallax relative flex flex-col items-center">
-        <Image
-          src="/logo-transparent.png"
-          alt="ORBE"
-          width={909}
-          height={608}
-          priority
-          style={{ animationDelay: "calc(var(--io, 0s) - .3s)" }}
-          className="logo-glow fadeup relative h-auto w-[min(88vw,34rem)]"
-        />
-        <p style={{ animationDelay: "calc(var(--io, 0s) + .1s)" }} className="fadeup relative mt-10 text-xs md:text-sm tracking-[0.4em] uppercase text-muted">
-          Música · Atmosfera · Conexões
-        </p>
-        <TransitionLink
-          href="/lista"
-          className="fadeup relative mt-12 border border-white px-10 py-4 text-xs tracking-[0.3em] uppercase hover:bg-accent hover:border-accent hover:text-black transition-colors"
-        >
-          <span style={{ display: "contents" }}>Entrar na lista</span>
-        </TransitionLink>
+          <Image
+            src="/logo-transparent.png"
+            alt="ORBE"
+            width={909}
+            height={608}
+            priority
+            style={{ animationDelay: "calc(var(--io, 0s) - .3s)" }}
+            className="logo-glow fadeup relative h-auto w-[min(86vw,34rem)]"
+          />
+          <p
+            style={{ animationDelay: "calc(var(--io, 0s) + .1s)" }}
+            className="fadeup relative mt-8 text-[0.65rem] uppercase tracking-[0.3em] text-muted min-[380px]:text-xs min-[380px]:tracking-[0.4em] md:mt-10 md:text-sm"
+          >
+            Música · Atmosfera · Conexões
+          </p>
+          {ev?.listaAberta ? (
+            <TransitionLink
+              href="/lista"
+              className="fadeup relative mt-10 border border-white px-8 py-4 text-xs uppercase tracking-[0.3em] transition-colors hover:border-accent hover:bg-accent hover:text-black sm:px-10"
+            >
+              Entrar na lista
+            </TransitionLink>
+          ) : (
+            <a
+              href={ev ? "#proxima" : "#sobre"}
+              className="fadeup relative mt-10 border border-line px-8 py-4 text-xs uppercase tracking-[0.3em] text-muted transition-colors hover:border-white hover:text-white sm:px-10"
+            >
+              {ev ? "Lista encerrada" : "Conheça o Orbe"}
+            </a>
+          )}
         </div>
         <span
           style={{ animationDelay: "calc(var(--io, 0s) + .9s)" }}
-          className="fadeup absolute bottom-8 left-1/2 -translate-x-1/2"
+          className="fadeup absolute bottom-[max(2rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2"
           aria-hidden="true"
         >
           <span className="scroll-cue" />
         </span>
       </section>
 
-      <section id="proxima" className="border-t border-line px-6 md:px-12 py-24 md:py-32">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-          <Reveal from="left">
-            <div className="overflow-hidden border border-line">
-              <Image
-                src={proxima.arte}
-                alt={`Orbe ${proxima.titulo} — ${proxima.dj}`}
+      {ev && (
+        <section id="proxima" className="border-t border-line px-5 py-16 sm:px-8 md:px-12 md:py-32">
+          <div className="mx-auto grid max-w-5xl items-center gap-10 md:grid-cols-2 md:gap-20">
+            <Reveal from="left">
+              <ImagemAmpliavel
+                src={ev.arteUrl}
+                alt={`Orbe ${ev.titulo}: ${ev.dj}`}
                 width={1080}
                 height={1350}
+                sizes="(min-width: 768px) 480px, 92vw"
+                frameClassName="border border-line"
                 className="reveal-img block h-auto w-full"
               />
-            </div>
-          </Reveal>
-          <Reveal delay={200} from="right">
-            <span className="line-draw mb-6" />
-            <h2 className="text-xs tracking-[0.4em] uppercase text-muted mb-6">
-              Próxima session
-            </h2>
-            <p className="text-sm tracking-[0.35em] uppercase text-muted">{proxima.titulo}</p>
-            <h3 className="mt-3 text-4xl md:text-6xl tracking-[0.15em] uppercase leading-tight">
-              {proxima.dj}
-            </h3>
-            <p className="mt-8 text-2xl md:text-3xl tracking-[0.2em]">
-              <span className="text-accent">{proxima.data}</span> <span className="text-muted">|</span> {proxima.hora}
-            </p>
-            <p className="mt-6 tracking-[0.2em] uppercase">{proxima.local}</p>
-            <p className="mt-2 text-sm text-muted tracking-wider uppercase">{proxima.endereco}</p>
-            <p className="mt-8 inline-block border border-line px-5 py-2 text-xs tracking-[0.3em] uppercase">
-              Vagas limitadas
-            </p>
-            <div>
-              <TransitionLink
-                href="/lista"
-                className="mt-10 inline-block border border-white px-10 py-4 text-xs tracking-[0.3em] uppercase hover:bg-accent hover:border-accent hover:text-black transition-colors"
-              >
-                Colocar meu nome na lista
-              </TransitionLink>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+            </Reveal>
+            <Reveal delay={200} from="right">
+              <span className="line-draw mb-6" />
+              <h2 className="mb-6 text-xs uppercase tracking-[0.4em] text-muted">Próxima session</h2>
+              <p className="text-sm uppercase tracking-[0.35em] text-muted">{ev.titulo}</p>
+              <h3 className="mt-3 break-words text-3xl uppercase leading-tight tracking-[0.1em] min-[380px]:text-4xl md:text-6xl md:tracking-[0.15em]">
+                {ev.dj}
+              </h3>
+              <p className="mt-6 text-2xl tracking-[0.2em] md:mt-8 md:text-3xl">
+                <span className="text-accent">{ev.data}</span> <span className="text-muted">|</span> {ev.hora}
+              </p>
+              <p className="mt-5 uppercase tracking-[0.2em] md:mt-6">{ev.local}</p>
+              <p className="mt-2 text-xs uppercase tracking-wider text-muted sm:text-sm">{ev.endereco}</p>
+              <p className="mt-7 inline-block border border-line px-5 py-2 text-xs uppercase tracking-[0.3em] md:mt-8">
+                {ev.listaAberta ? "Vagas limitadas" : "Lista encerrada"}
+              </p>
+              {ev.listaAberta && (
+                <div>
+                  <TransitionLink
+                    href="/lista"
+                    className="mt-8 block w-full border border-white px-6 py-4 text-center text-xs uppercase tracking-[0.3em] transition-colors hover:border-accent hover:bg-accent hover:text-black sm:inline-block sm:w-auto sm:px-10 md:mt-10"
+                  >
+                    Colocar meu nome na lista
+                  </TransitionLink>
+                </div>
+              )}
+            </Reveal>
+          </div>
+        </section>
+      )}
 
-      <section id="sobre" className="max-w-3xl mx-auto px-6 py-32 md:py-48">
+      <section id="sobre" className="mx-auto max-w-3xl px-5 py-24 sm:px-8 md:py-48">
         <Reveal>
           <span className="line-draw mb-10" />
-          <h2 className="text-xs tracking-[0.4em] uppercase text-muted mb-10">O Orbe</h2>
+          <h2 className="mb-10 text-xs uppercase tracking-[0.4em] text-muted">O Orbe</h2>
         </Reveal>
         <Reveal delay={150}>
-          <p className="text-2xl md:text-4xl leading-snug">
-            Um selo. Uma comunidade. Uma live session por vez, em um lugar
-            diferente a cada vez.
+          <p className="text-2xl leading-snug md:text-4xl">
+            Um selo. Uma comunidade. Uma live session por vez, em um lugar diferente a cada vez.
           </p>
         </Reveal>
         <Reveal delay={350}>
-          <p className="mt-10 text-lg text-muted leading-relaxed">
-            Levamos DJs para espaços inesperados, gravamos, editamos e
-            publicamos. Cada session vira portfólio para o artista e memória
-            para quem faz parte.
+          <p className="mt-10 text-base leading-relaxed text-muted md:text-lg">
+            Levamos DJs para espaços inesperados, gravamos, editamos e publicamos. Cada session vira portfólio para o
+            artista e memória para quem faz parte.
           </p>
         </Reveal>
       </section>
 
-      <section id="sessions" className="border-t border-line px-6 md:px-12 py-32">
+      <section id="sessions" className="border-t border-line px-5 py-20 sm:px-8 md:px-12 md:py-32">
         <Reveal>
           <span className="line-draw mb-6" />
-          <h2 className="text-xs tracking-[0.4em] uppercase text-muted mb-16">Sessions</h2>
+          <h2 className="mb-12 text-xs uppercase tracking-[0.4em] text-muted md:mb-16">Sessions</h2>
         </Reveal>
-        {sessions.length === 0 ? (
+        {sessoes.length === 0 ? (
           <Reveal delay={150}>
-            <p className="text-2xl md:text-4xl text-muted">Em breve.</p>
+            <p className="text-2xl text-muted md:text-4xl">Em breve.</p>
           </Reveal>
         ) : (
           <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
-            {sessions.map((s, i) => (
-              <Reveal key={s.youtubeId} delay={i * 120}>
-              <article>
-                <div className="aspect-video border border-line">
-                  <iframe
-                    className="w-full h-full"
-                    src={`https://www.youtube-nocookie.com/embed/${s.youtubeId}`}
-                    title={`${s.dj} — Orbe session`}
-                    loading="lazy"
-                    allowFullScreen
-                  />
-                </div>
-                <h3 className="mt-4 text-xl tracking-widest uppercase">{s.dj}</h3>
-                <p className="text-sm text-muted">{s.local} · {s.data}</p>
-              </article>
+            {sessoes.map((s, i) => (
+              <Reveal key={s.id} delay={i * 120}>
+                <article>
+                  <div className="aspect-video border border-line">
+                    <iframe
+                      className="h-full w-full"
+                      src={`https://www.youtube-nocookie.com/embed/${s.youtubeId}`}
+                      title={`${s.dj} — Orbe session`}
+                      loading="lazy"
+                      allowFullScreen
+                    />
+                  </div>
+                  <h3 className="mt-4 text-xl uppercase tracking-widest">{s.dj}</h3>
+                  <p className="text-sm text-muted">
+                    {s.local} · {s.data}
+                  </p>
+                </article>
               </Reveal>
             ))}
           </div>
         )}
       </section>
 
-      <footer className="border-t border-line px-6 md:px-12 py-10 flex flex-col md:flex-row gap-4 justify-between text-xs tracking-[0.3em] uppercase text-muted">
-        <span className="flex items-center gap-3">© {new Date().getFullYear()} <Wordmark className="h-2.5" /></span>
-        <div className="flex gap-8">
-          {Object.entries(links).filter(([, v]) => v).map(([k, v]) => (
-            <a key={k} href={v} className="hover:text-white transition-colors">{k}</a>
-          ))}
+      <footer className="flex flex-col justify-between gap-4 border-t border-line px-5 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-10 text-xs uppercase tracking-[0.3em] text-muted sm:px-8 md:flex-row md:px-12">
+        <span className="flex items-center gap-3">
+          © {new Date().getFullYear()} <Wordmark className="h-2.5" />
+        </span>
+        <div className="flex flex-wrap gap-x-8 gap-y-3">
+          {Object.entries(links)
+            .filter(([, v]) => v)
+            .map(([k, v]) => (
+              <a key={k} href={v} className="py-1 transition-colors hover:text-white">
+                {k}
+              </a>
+            ))}
         </div>
       </footer>
     </main>

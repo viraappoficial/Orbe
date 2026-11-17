@@ -114,6 +114,7 @@ body {
   display: flex; align-items: center; justify-content: center;
 }
 .curtain-on { opacity: 1; pointer-events: all; transition: opacity .42s ease; }
+.curtain-instant { opacity: 1; transition: none; }
 .curtain-line {
   width: 9rem; height: 1px; background: var(--accent);
   transform: scaleX(0); transition: transform .42s ease;
