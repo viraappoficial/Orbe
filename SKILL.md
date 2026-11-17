@@ -43,8 +43,12 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 **Links das redes:** preencha `links` (youtube, instagram, tiktok) em `src/data/sessions.ts`. Só aparecem no rodapé os que tiverem valor.
 
 ## Lista de presença
-- O formulário envia para `POST /api/inscricao`, que valida e grava na tabela `inscricoes` (upsert por e-mail).
-- Campos: nome, e-mail, instagram, tipo (`publico`, `dj` ou `parceiro`).
+- O formulário envia para `POST /api/inscricao`, que valida e grava na tabela `inscricoes` (uma inscrição por CPF; reenviar atualiza a anterior).
+- Campos: nome completo, WhatsApp com DDD, CPF, instagram (opcional) e confirmação (`sim`, `talvez`, `nao`). Espelha o Google Forms provisório. Validações em `src/lib/validate.ts`, usadas no client e no server.
+- **CPF é dado pessoal sensível (LGPD):** nunca em log, commit, mensagem de erro nem resposta da API. Só o servidor lê o banco. O texto de uso dos dados aparece abaixo do botão do formulário.
+- Prazo e dia da confirmação: `proxima.prazo` e `proxima.dia` em `src/data/sessions.ts`. Atualizar a cada session.
+- Ao concluir, a pessoa é levada ao grupo do WhatsApp (`grupoWhatsapp` em `src/data/sessions.ts` ou a variável `NEXT_PUBLIC_WHATSAPP_GROUP`). Sem o link, mostra só a confirmação.
+- Migrações do banco em `db/migrate-*.sql`; o `db/schema.sql` é o estado atual.
 - Há um honeypot (`website`) contra spam. Não remova.
 - Só o servidor acessa o banco, via `DATABASE_URL` (Neon). Nunca expor ao client.
 - Variável necessária (Vercel e `.env.local`): `DATABASE_URL`.

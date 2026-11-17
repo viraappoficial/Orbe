@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { neon } from "@neondatabase/serverless";
+import { CONFIRMACOES, normalizePhone, onlyDigits, validCpf, validPhone } from "@/lib/validate";
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
@@ -8,14 +9,16 @@ export async function POST(req: Request) {
   // honeypot: bots preenchem, humanos não
   if (body.website) return NextResponse.json({ ok: true });
 
-  const nome = String(body.nome ?? "").trim().slice(0, 120);
-  const email = String(body.email ?? "").trim().toLowerCase().slice(0, 200);
+  const nome = String(body.nome ?? "").trim().replace(/\s+/g, " ").slice(0, 120);
+  const telefone = normalizePhone(String(body.telefone ?? ""));
+  const cpf = onlyDigits(String(body.cpf ?? ""));
   const instagram = String(body.instagram ?? "").trim().replace(/^@/, "").slice(0, 60);
-  const tipo = body.tipo === "dj" ? "dj" : body.tipo === "parceiro" ? "parceiro" : "publico";
+  const confirmacao = String(body.confirmacao ?? "");
 
-  if (!nome || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return NextResponse.json({ error: "Preencha nome e e-mail válidos" }, { status: 400 });
-  }
+  if (nome.split(" ").length < 2) return bad("Digite seu nome completo.");
+  if (!validPhone(telefone)) return bad("Digite o WhatsApp com DDD.");
+  if (!validCpf(cpf)) return bad("CPF inválido. Confira os 11 números.");
+  if (!(CONFIRMACOES as readonly string[]).includes(confirmacao)) return bad("Escolha uma opção de confirmação.");
 
   const url = process.env.DATABASE_URL;
   if (!url) {
@@ -24,14 +27,20 @@ export async function POST(req: Request) {
 
   try {
     const sql = neon(url);
+    // Uma inscrição por CPF: reenviar atualiza a anterior (ex.: mudou a confirmação).
     await sql`
-      insert into inscricoes (nome, email, instagram, tipo)
-      values (${nome}, ${email}, ${instagram}, ${tipo})
-      on conflict (email) do update
-        set nome = excluded.nome, instagram = excluded.instagram, tipo = excluded.tipo
+      insert into inscricoes (nome, telefone, cpf, instagram, confirmacao, tipo)
+      values (${nome}, ${telefone}, ${cpf}, ${instagram}, ${confirmacao}, 'publico')
+      on conflict (cpf) where cpf is not null do update
+        set nome = excluded.nome, telefone = excluded.telefone,
+            instagram = excluded.instagram, confirmacao = excluded.confirmacao
     `;
   } catch {
     return NextResponse.json({ error: "Não foi possível salvar" }, { status: 500 });
   }
   return NextResponse.json({ ok: true });
+}
+
+function bad(error: string) {
+  return NextResponse.json({ error }, { status: 400 });
 }

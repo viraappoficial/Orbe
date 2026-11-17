@@ -6,10 +6,12 @@ import { useEffect, useRef } from "react";
 export default function Reveal({
   children,
   delay = 0,
+  from = "up",
   className = "",
 }: {
   children: React.ReactNode;
   delay?: number;
+  from?: "up" | "left" | "right";
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -37,7 +39,7 @@ export default function Reveal({
   return (
     <div
       ref={ref}
-      className={`reveal ${className}`}
+      className={`reveal ${from === "up" ? "" : `reveal-${from}`} ${className}`}
       style={{ transitionDelay: `${delay}ms` }}
     >
       {children}

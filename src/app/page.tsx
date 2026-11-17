@@ -14,7 +14,7 @@ const nav = [
 export default function Home() {
   return (
     <main>
-      <header style={{ animationDelay: "calc(var(--io, 0s) + .2s)" }} className="fadeup fixed top-0 inset-x-0 z-10 flex justify-between items-center px-6 md:px-12 py-6 text-xs tracking-[0.35em] uppercase bg-gradient-to-b from-black to-transparent">
+      <header style={{ animationDelay: "calc(var(--io, 0s) + .2s)" }} className="site-header fadeup fixed top-0 inset-x-0 z-10 flex justify-between items-center px-6 md:px-12 py-6 text-xs tracking-[0.35em] uppercase bg-gradient-to-b from-black to-transparent">
         <TransitionLink href="/" className="block"><Wordmark /></TransitionLink>
         <nav className="flex items-center gap-6 md:gap-10 text-muted whitespace-nowrap">
           {nav.map(([label, href]) =>
@@ -33,6 +33,7 @@ export default function Home() {
 
       <section className="relative min-h-screen flex flex-col items-center justify-center px-6 text-center overflow-hidden">
         <div className="hero-glow" aria-hidden="true" />
+        <div className="hero-parallax relative flex flex-col items-center">
         <Image
           src="/logo-transparent.png"
           alt="ORBE"
@@ -51,6 +52,7 @@ export default function Home() {
         >
           <span style={{ display: "contents" }}>Entrar na lista</span>
         </TransitionLink>
+        </div>
         <span
           style={{ animationDelay: "calc(var(--io, 0s) + 1.4s)" }}
           className="fadeup absolute bottom-8 left-1/2 -translate-x-1/2"
@@ -62,18 +64,20 @@ export default function Home() {
 
       <section id="proxima" className="border-t border-line px-6 md:px-12 py-24 md:py-32">
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-          <Reveal>
+          <Reveal from="left">
             <div className="overflow-hidden border border-line">
-              <Image
-                src={proxima.arte}
-                alt={`Orbe ${proxima.titulo} — ${proxima.dj}`}
-                width={1122}
-                height={1402}
-                className="reveal-img w-full h-auto"
-              />
+              <div data-parallax="0.05" className="will-change-transform">
+                <Image
+                  src={proxima.arte}
+                  alt={`Orbe ${proxima.titulo} — ${proxima.dj}`}
+                  width={1122}
+                  height={1402}
+                  className="reveal-img w-full h-auto"
+                />
+              </div>
             </div>
           </Reveal>
-          <Reveal delay={200}>
+          <Reveal delay={200} from="right">
             <span className="line-draw mb-6" />
             <h2 className="text-xs tracking-[0.4em] uppercase text-muted mb-6">
               Próxima session

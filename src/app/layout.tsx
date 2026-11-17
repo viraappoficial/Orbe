@@ -3,6 +3,7 @@ import { Jost } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import Intro from "@/components/Intro";
 import { Curtain } from "@/components/PageTransition";
+import ScrollFX from "@/components/ScrollFX";
 import "./globals.css";
 
 const jost = Jost({
@@ -43,6 +44,7 @@ export default function RootLayout({
       <body className={jost.variable}>
         <Intro />
         <Curtain />
+        <ScrollFX />
         {children}
         <Analytics />
       </body>

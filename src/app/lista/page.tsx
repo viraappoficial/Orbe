@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { TransitionLink } from "@/components/PageTransition";
 import Wordmark from "@/components/Wordmark";
+import Reveal from "@/components/Reveal";
 import PresenceForm from "@/components/PresenceForm";
-import { proxima } from "@/data/sessions";
+import { proxima, grupoWhatsapp } from "@/data/sessions";
 
 export const metadata: Metadata = {
   title: "Lista de presença · ORBE",
@@ -11,44 +12,112 @@ export const metadata: Metadata = {
   openGraph: { images: [proxima.arte] },
 };
 
+const mapa = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  `${proxima.local}, ${proxima.endereco}`
+)}`;
+
+function Back() {
+  return (
+    <TransitionLink href="/" className="inline-flex items-center gap-3 text-muted hover:text-white transition-colors">
+      <svg width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" strokeWidth="1" aria-hidden="true">
+        <path d="M15 5H1M5 1L1 5l4 4" />
+      </svg>
+      <Wordmark className="h-3" />
+    </TransitionLink>
+  );
+}
+
 export default function Lista() {
   return (
-    <main style={{ animationDelay: "calc(var(--io, 0s) - .2s)" }} className="page-in min-h-screen px-6 py-10 md:py-16">
-      <div className="max-w-md mx-auto">
-        <TransitionLink href="/" className="inline-flex items-center gap-3 text-xs text-muted hover:text-white transition-colors">
-          <span aria-hidden="true">←</span> <Wordmark className="h-3" />
-        </TransitionLink>
+    <main
+      style={{ animationDelay: "calc(var(--io, 0s) - .2s)" }}
+      className="page-in relative min-h-screen overflow-hidden px-6 py-8 md:py-12"
+    >
+      <div className="lista-glow" aria-hidden="true" />
 
-        <Image
-          src={proxima.arte}
-          alt={`Orbe ${proxima.titulo}: ${proxima.dj}, ${proxima.data} às ${proxima.hora}, ${proxima.local}`}
-          width={1122}
-          height={1402}
-          priority
-          className="mt-8 w-full h-auto border border-line"
-        />
+      <div className="relative mx-auto max-w-5xl">
+        <Back />
 
-        <div className="mt-10 text-center">
-          <p className="text-xs tracking-[0.35em] uppercase text-muted">{proxima.titulo}</p>
-          <h1 className="mt-2 text-3xl tracking-[0.15em] uppercase">{proxima.dj}</h1>
-          <p className="mt-4 text-xl tracking-[0.2em]">
-            <span className="text-accent">{proxima.data}</span> <span className="text-muted">|</span> {proxima.hora}
-          </p>
-          <p className="mt-3 tracking-[0.15em] uppercase">{proxima.local}</p>
-          <p className="mt-1 text-sm text-muted uppercase tracking-wider">{proxima.endereco}</p>
-          <p className="mt-6 inline-block border border-line px-4 py-2 text-xs tracking-[0.3em] uppercase">
-            Vagas limitadas
-          </p>
+        <div className="mt-8 grid items-start gap-10 md:mt-14 md:grid-cols-[minmax(0,25rem)_1fr] md:gap-20">
+          {/* Arte grande, só no desktop. No celular o contexto vem na miniatura abaixo. */}
+          <div className="hidden md:sticky md:top-10 md:block">
+            <Image
+              src={proxima.arte}
+              alt={`Orbe ${proxima.titulo}: ${proxima.dj}, ${proxima.data} às ${proxima.hora}, ${proxima.local}`}
+              width={1122}
+              height={1402}
+              className="h-auto w-full border border-line shadow-[0_40px_90px_-35px_rgba(201,151,90,.45)]"
+            />
+          </div>
+
+          <div>
+            {/* Cabeçalho do evento: miniatura + título (celular) */}
+            <div className="flex items-center gap-5 md:block">
+              <Image
+                src={proxima.arte}
+                alt=""
+                width={1122}
+                height={1402}
+                priority
+                className="h-auto w-24 shrink-0 border border-line md:hidden"
+              />
+              <div>
+                <p className="text-xs uppercase tracking-[0.35em] text-muted">
+                  {proxima.titulo} · {proxima.dj}
+                </p>
+                <h1 className="mt-3 text-3xl uppercase leading-tight tracking-[0.12em] md:text-5xl">
+                  Seu nome na lista
+                </h1>
+              </div>
+            </div>
+
+            <Reveal>
+              <p className="mt-6 max-w-md text-muted">
+                As vagas são limitadas. Deixe seu nome para entrar na lista da session.
+              </p>
+
+              <dl className="mt-8 divide-y divide-line border-y border-line">
+                <div className="flex items-baseline justify-between gap-6 py-4">
+                  <dt className="text-xs uppercase tracking-[0.3em] text-muted">Data</dt>
+                  <dd className="text-lg tracking-[0.15em]">
+                    <span className="text-accent">{proxima.data}</span>
+                    <span className="mx-2 text-muted">|</span>
+                    {proxima.hora}
+                  </dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-6 py-4">
+                  <dt className="text-xs uppercase tracking-[0.3em] text-muted">Local</dt>
+                  <dd className="text-right">
+                    <span className="block uppercase tracking-[0.15em]">{proxima.local}</span>
+                    <a
+                      href={mapa}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 block text-sm text-muted underline-offset-4 hover:text-white hover:underline"
+                    >
+                      {proxima.endereco}
+                    </a>
+                  </dd>
+                </div>
+              </dl>
+            </Reveal>
+
+            <Reveal delay={150}>
+              <div className="mt-10 border border-line bg-white/[0.02] p-6 md:p-8">
+                <PresenceForm
+                  sessionLabel={proxima.titulo}
+                  dia={proxima.dia}
+                  prazo={proxima.prazo}
+                  whatsappUrl={grupoWhatsapp || undefined}
+                />
+              </div>
+            </Reveal>
+
+            <p className="mt-12 text-xs uppercase tracking-[0.3em] text-muted">
+              Música · Atmosfera · Conexões
+            </p>
+          </div>
         </div>
-
-        <div className="mt-14">
-          <h2 className="text-xs tracking-[0.4em] uppercase text-muted mb-8">Seu nome na lista</h2>
-          <PresenceForm sessionLabel={proxima.titulo} />
-        </div>
-
-        <p className="mt-16 text-center text-xs tracking-[0.3em] uppercase text-muted">
-          Música · Atmosfera · Conexões
-        </p>
       </div>
     </main>
   );
