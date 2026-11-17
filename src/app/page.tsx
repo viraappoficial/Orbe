@@ -66,15 +66,13 @@ export default function Home() {
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 md:gap-20 items-center">
           <Reveal from="left">
             <div className="overflow-hidden border border-line">
-              <div data-parallax="0.05" className="will-change-transform">
-                <Image
-                  src={proxima.arte}
-                  alt={`Orbe ${proxima.titulo} — ${proxima.dj}`}
-                  width={1080}
-                  height={1350}
-                  className="reveal-img w-full h-auto"
-                />
-              </div>
+              <Image
+                src={proxima.arte}
+                alt={`Orbe ${proxima.titulo} — ${proxima.dj}`}
+                width={1080}
+                height={1350}
+                className="reveal-img block h-auto w-full"
+              />
             </div>
           </Reveal>
           <Reveal delay={200} from="right">

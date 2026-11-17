@@ -23,6 +23,8 @@ export const proxima = {
   endereco: "Av. Pioneiro Alício Arantes, Campolina, 608 – Jardim Real",
   arte: "/session-001-oficial.webp",
   og: "/session-001-og.jpg", // previa ao compartilhar o link
+  cidade: "Maringá, PR", // usada no mapa; sem ela o pin pode cair no lugar errado
+  mapaEmbed: "", // opcional: URL do iframe copiada em Maps > Compartilhar > Incorporar um mapa
   dia: "20/11",
   prazo: "18/11", // prazo para confirmar presença
 };

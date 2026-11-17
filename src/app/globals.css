@@ -128,6 +128,9 @@ body {
   background: radial-gradient(ellipse 50% 60% at 72% 20%, rgba(201,151,90,.10), transparent 70%);
 }
 
+/* Mapa escuro: inverte o mapa claro do Google e devolve as cores */
+.map-dark { filter: invert(92%) hue-rotate(180deg) contrast(.92) saturate(.75) brightness(.95); }
+
 /* Rolagem */
 :root { --hero-p: 0; --page-p: 0; }
 .hero-parallax {

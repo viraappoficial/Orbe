@@ -3,6 +3,7 @@ import Image from "next/image";
 import { TransitionLink } from "@/components/PageTransition";
 import Wordmark from "@/components/Wordmark";
 import Reveal from "@/components/Reveal";
+import MapaLocal from "@/components/MapaLocal";
 import PresenceForm from "@/components/PresenceForm";
 import { proxima, grupoWhatsapp } from "@/data/sessions";
 
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 const mapa = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-  `${proxima.local}, ${proxima.endereco}`
+  [proxima.endereco, proxima.cidade].filter(Boolean).join(", ")
 )}`;
 
 function Back() {
@@ -100,6 +101,15 @@ export default function Lista() {
                   </dd>
                 </div>
               </dl>
+
+              <div className="mt-8">
+                <MapaLocal
+                  local={proxima.local}
+                  endereco={proxima.endereco}
+                  cidade={proxima.cidade}
+                  embed={proxima.mapaEmbed || undefined}
+                />
+              </div>
             </Reveal>
 
             <Reveal delay={150}>

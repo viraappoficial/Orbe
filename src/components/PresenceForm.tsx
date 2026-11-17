@@ -26,7 +26,7 @@ function validate(f: Fields): Errors {
   const e: Errors = {};
   if (f.nome.trim().split(/\s+/).filter(Boolean).length < 2)
     e.nome = "Digite seu nome completo.";
-  if (!validPhone(f.telefone)) e.telefone = "Digite o WhatsApp com DDD, como (67) 99999-9999.";
+  if (!validPhone(f.telefone)) e.telefone = "Digite o WhatsApp com DDD, como (00) 90000-0000.";
   if (!validCpf(f.cpf)) e.cpf = "CPF inválido. Confira os 11 números.";
   if (!f.confirmacao) e.confirmacao = "Escolha uma opção.";
   return e;
@@ -152,7 +152,7 @@ export default function PresenceForm({
         <label htmlFor="telefone" className={label}>WhatsApp com DDD</label>
         <input
           id="telefone" name="telefone" type="tel" autoComplete="tel-national" inputMode="tel" required
-          placeholder="(67) 99999-9999"
+          placeholder="(00) 90000-0000"
           value={values.telefone}
           onChange={(e) => set("telefone", formatPhone(e.target.value))}
           onBlur={() => touch("telefone")}
