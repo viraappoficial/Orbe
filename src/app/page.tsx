@@ -5,6 +5,7 @@ import Wordmark from "@/components/Wordmark";
 import ImagemAmpliavel from "@/components/ImagemAmpliavel";
 import MapaLocal from "@/components/MapaLocal";
 import Apoio from "@/components/Apoio";
+import VideoTeaser from "@/components/VideoTeaser";
 import { getApoiadores, getEventoAtual, getSessoesPublicadas } from "@/lib/db";
 import { links } from "@/data/sessions";
 
@@ -134,6 +135,16 @@ export default async function Home() {
               </div>
             </Reveal>
           </div>
+        </section>
+      )}
+
+      {/* Vídeo de contagem (temporário). Para tirar depois do evento, apague este bloco. */}
+      {ev && (
+        <section id="video" className="border-t border-line px-5 py-16 sm:px-8 md:px-12 md:py-28">
+          <Reveal>
+            <h2 className="mb-8 text-center text-xs uppercase tracking-[0.4em] text-muted">Falta pouco</h2>
+            <VideoTeaser src="/faltam-2-dias.mp4" poster="/faltam-2-dias-poster.webp" legenda={`Contagem para a ${ev.titulo}`} />
+          </Reveal>
         </section>
       )}
 
