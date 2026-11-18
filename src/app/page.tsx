@@ -148,6 +148,8 @@ export default async function Home() {
         </section>
       )}
 
+      <div className="border-t border-line" aria-hidden="true" />
+
       <section id="sobre" className="mx-auto max-w-3xl px-5 py-24 sm:px-8 md:py-48">
         <Reveal>
           <span className="line-draw mb-10" />
