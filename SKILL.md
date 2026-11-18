@@ -110,9 +110,16 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 - Foto ampliada, aviso do WhatsApp e mapa em janela usam `createPortal` (raiz do `body`). Enquanto a foto ou o aviso está aberto, `useOverlayAberto` (`src/lib/overlay.ts`) esconde os iframes, porque alguns navegadores desenham iframes de outro site por cima de qualquer `z-index`. `MapaModal` **não** usa isso (esconderia o próprio mapa).
 - Listas de opções (`<select>`) são escuras em todo o site (`src/app/globals.css`): sem isso o navegador desenha fundo branco com texto claro.
 
+## Apoiadores
+- Painel → aba **Apoiadores**: cadastra nome, logo (enviado pelo painel), site e/ou Instagram, frase curta, ordem, **ativo**, e **onde aparece**: "Apoia o projeto todo" (todas as sessions) e/ou em quais sessions (`evento_apoiadores`). Um apoiador sem projeto e sem session ligada não aparece em lugar nenhum (o painel avisa).
+- No site: faixa **Apoio** na home (`#apoio`, antes do "Faça parte") e linha **Apoio** no fim da coluna do formulário da `/lista`. Só aparecem os **ativos** que apoiam o projeto ou a session anunciada (`getApoiadores` em `src/lib/db.ts`; componente `src/components/Apoio.tsx`).
+- O logo leva ao site; sem site, ao Instagram; sem logo, aparece o nome em texto. "Logo em branco" pinta o logo todo de branco (só para logos de uma cor, com fundo transparente).
+- Segurança: o logo só pode ser um arquivo enviado pelo painel (`/api/arte/<id>`), nunca uma imagem de outro site. Links são normalizados e validados.
+- API: `/api/admin/apoiadores` e `/api/admin/apoiadores/[id]` (PATCH troca a lista de sessions de uma vez). Validação em `src/lib/apoiadores-input.ts`.
+
 ## Banco e migrações
-- `db/schema.sql` é o estado **completo e atual** (idempotente). `db/migrate-001-campos-lista.sql` a `db/migrate-004-checkin.sql` são o histórico, já aplicadas em produção. Mudança de esquema: criar `migrate-00N-*.sql`, aplicar, e atualizar `db/schema.sql` na mesma entrega.
-- Tabelas: `eventos`, `artes`, `inscricoes`, `interessados`, `admin_tentativas`, `limite_envios`.
+- `db/schema.sql` é o estado **completo e atual** (idempotente). `db/migrate-001-campos-lista.sql` a `db/migrate-005-apoiadores.sql` são o histórico, já aplicadas em produção. Mudança de esquema: criar `migrate-00N-*.sql`, aplicar, e atualizar `db/schema.sql` na mesma entrega.
+- Tabelas: `eventos`, `artes`, `inscricoes`, `interessados`, `apoiadores`, `evento_apoiadores`, `admin_tentativas`, `limite_envios`.
 
 ## Regras e cuidados
 - Dados pessoais (CPF, telefone, nome de inscritos) nunca em log, commit, mensagem de erro, conversa ou arquivo do projeto. Testes com dados reais: usar linhas fictícias e **apagar no fim**.

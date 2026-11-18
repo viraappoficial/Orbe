@@ -5,7 +5,8 @@ import ImagemAmpliavel from "@/components/ImagemAmpliavel";
 import MapaLocal from "@/components/MapaLocal";
 import MapaModal from "@/components/MapaModal";
 import PresenceForm from "@/components/PresenceForm";
-import { getEventoAtual } from "@/lib/db";
+import Apoio from "@/components/Apoio";
+import { getApoiadores, getEventoAtual } from "@/lib/db";
 import { grupoWhatsapp, proxima } from "@/data/sessions";
 
 export const revalidate = 60;
@@ -66,6 +67,7 @@ export default async function Lista() {
     );
   }
 
+  const apoiadores = await getApoiadores(ev.id);
   const alt = `Orbe ${ev.titulo}: ${ev.dj}, ${ev.data} às ${ev.hora}, ${ev.local}`;
   const enderecoCurto = `${ev.endereco}${ev.cidade ? ` · ${ev.cidade.split(",")[0]}` : ""}`;
   const mapaProps = { local: ev.local, endereco: ev.endereco, cidade: ev.cidade, embed: ev.mapaEmbed || undefined };
@@ -150,6 +152,8 @@ export default async function Lista() {
               <MapaLocal {...mapaProps} />
             </div>
           </details>
+
+          <Apoio apoiadores={apoiadores} variante="compacto" />
 
           <p className="mt-10 text-[0.62rem] uppercase tracking-[0.3em] text-muted md:mt-14">Música · Atmosfera · Conexões</p>
         </div>

@@ -4,7 +4,8 @@ import Reveal from "@/components/Reveal";
 import Wordmark from "@/components/Wordmark";
 import ImagemAmpliavel from "@/components/ImagemAmpliavel";
 import MapaLocal from "@/components/MapaLocal";
-import { getEventoAtual, getSessoesPublicadas } from "@/lib/db";
+import Apoio from "@/components/Apoio";
+import { getApoiadores, getEventoAtual, getSessoesPublicadas } from "@/lib/db";
 import { links } from "@/data/sessions";
 
 // Regenera a cada minuto; o admin força a atualização na hora ao salvar.
@@ -12,6 +13,7 @@ export const revalidate = 60;
 
 export default async function Home() {
   const [ev, sessoes] = await Promise.all([getEventoAtual(), getSessoesPublicadas()]);
+  const apoiadores = await getApoiadores(ev?.id);
 
   const nav: [string, string][] = [
     ...(ev ? ([["Próxima", "#proxima"]] as [string, string][]) : []),
@@ -186,6 +188,20 @@ export default async function Home() {
           </div>
         )}
       </section>
+
+      {apoiadores.length > 0 && (
+        <section id="apoio" className="border-t border-line px-5 py-16 sm:px-8 md:px-12 md:py-24">
+          <div className="mx-auto max-w-5xl">
+            <Reveal>
+              <span className="line-draw mb-6" />
+              <h2 className="mb-10 text-xs uppercase tracking-[0.4em] text-muted">Apoio</h2>
+            </Reveal>
+            <Reveal delay={150}>
+              <Apoio apoiadores={apoiadores} variante="faixa" />
+            </Reveal>
+          </div>
+        </section>
+      )}
 
       <section id="participe" className="border-t border-line px-5 py-20 sm:px-8 md:px-12 md:py-32">
         <div className="mx-auto max-w-5xl">

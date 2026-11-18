@@ -30,3 +30,8 @@ export type Interessado = {
   organizacao: string; categoria: string; link: string; mensagem: string;
   status: "novo" | "contatado" | "arquivado"; criadoEm: string;
 };
+
+export type ApoiadorAdmin = {
+  id: string; nome: string; logoUrl: string; logoBranco: boolean; link: string; instagram: string;
+  descricao: string; projeto: boolean; ativo: boolean; ordem: number; eventos: string[];
+};

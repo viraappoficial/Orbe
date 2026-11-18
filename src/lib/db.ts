@@ -100,3 +100,43 @@ export async function getSessoesPublicadas(): Promise<Evento[]> {
     return [];
   }
 }
+
+export type Apoiador = {
+  id: string;
+  nome: string;
+  logoUrl: string;
+  logoBranco: boolean;
+  link: string;
+  instagram: string;
+  descricao: string;
+  projeto: boolean;
+  ativo: boolean;
+  ordem: number;
+};
+
+export function mapApoiador(r: Row): Apoiador {
+  const s = (k: string) => (r[k] == null ? "" : String(r[k]));
+  return {
+    id: s("id"), nome: s("nome"), logoUrl: s("logo_url"), logoBranco: r["logo_branco"] === true,
+    link: s("link"), instagram: s("instagram"), descricao: s("descricao"),
+    projeto: r["projeto"] === true, ativo: r["ativo"] !== false, ordem: Number(r["ordem"] ?? 0),
+  };
+}
+
+/** Apoiadores ativos que aparecem para este evento: os ligados a ele e os do projeto todo. */
+export async function getApoiadores(eventoId?: string): Promise<Apoiador[]> {
+  try {
+    const sql = getSql();
+    const ok = eventoId && /^[0-9a-f-]{36}$/i.test(eventoId) ? eventoId : null;
+    const rows = (await sql`
+      select a.* from apoiadores a
+      where a.ativo and (
+        a.projeto or (${ok}::uuid is not null and exists (
+          select 1 from evento_apoiadores ea where ea.apoiador_id = a.id and ea.evento_id = ${ok}::uuid))
+      )
+      order by a.ordem, a.nome`) as Row[];
+    return rows.map(mapApoiador);
+  } catch {
+    return [];
+  }
+}

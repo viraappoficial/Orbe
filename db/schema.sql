@@ -88,3 +88,25 @@ create table if not exists limite_envios (
   em timestamptz not null default now()
 );
 create index if not exists limite_envios_ip on limite_envios (ip, rota, em desc);
+
+-- Apoiadores do projeto e das sessions.
+create table if not exists apoiadores (
+  id uuid primary key default gen_random_uuid(),
+  nome text not null,
+  logo_url text,
+  logo_branco boolean not null default false,
+  link text,
+  instagram text,
+  descricao text,
+  projeto boolean not null default false,
+  ativo boolean not null default true,
+  ordem int not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create table if not exists evento_apoiadores (
+  evento_id uuid not null references eventos(id) on delete cascade,
+  apoiador_id uuid not null references apoiadores(id) on delete cascade,
+  primary key (evento_id, apoiador_id)
+);
+create index if not exists evento_apoiadores_apoiador on evento_apoiadores (apoiador_id);
