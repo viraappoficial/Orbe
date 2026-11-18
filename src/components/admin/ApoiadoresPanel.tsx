@@ -6,12 +6,12 @@ import { api, type ApoiadorAdmin, type EventoAdmin } from "./api";
 import { prepararImagem } from "./comprimir";
 
 type Form = {
-  nome: string; link: string; instagram: string; descricao: string; logoUrl: string;
+  nome: string; link: string; instagram: string; descricao: string; sobre: string; beneficio: string; logoUrl: string;
   logoBranco: boolean; projeto: boolean; ativo: boolean; ordem: string; eventos: string[];
 };
-const VAZIO: Form = { nome: "", link: "", instagram: "", descricao: "", logoUrl: "", logoBranco: false, projeto: false, ativo: true, ordem: "0", eventos: [] };
+const VAZIO: Form = { nome: "", link: "", instagram: "", descricao: "", sobre: "", beneficio: "", logoUrl: "", logoBranco: false, projeto: false, ativo: true, ordem: "0", eventos: [] };
 const paraForm = (a: ApoiadorAdmin): Form => ({
-  nome: a.nome, link: a.link, instagram: a.instagram ? `@${a.instagram}` : "", descricao: a.descricao, logoUrl: a.logoUrl,
+  nome: a.nome, link: a.link, instagram: a.instagram ? `@${a.instagram}` : "", descricao: a.descricao, sobre: a.sobre, beneficio: a.beneficio, logoUrl: a.logoUrl,
   logoBranco: a.logoBranco, projeto: a.projeto, ativo: a.ativo, ordem: String(a.ordem), eventos: a.eventos,
 });
 
@@ -129,6 +129,16 @@ export default function ApoiadoresPanel({ eventos }: { eventos: EventoAdmin[] })
             <div><label htmlFor="ap-link" className={rotulo}>Site ou link (opcional)</label><input id="ap-link" value={form.link} onChange={(e) => set("link", e.target.value)} placeholder="https://…" inputMode="url" className={campo} /></div>
             <div><label htmlFor="ap-ig" className={rotulo}>Instagram (opcional)</label><input id="ap-ig" value={form.instagram} onChange={(e) => set("instagram", e.target.value)} placeholder="@apoiador" className={campo} /><p className="mt-1 text-xs text-muted">Se não houver site, o logo leva ao Instagram.</p></div>
             <div className="md:col-span-2"><label htmlFor="ap-desc" className={rotulo}>Frase curta (opcional)</label><input id="ap-desc" maxLength={160} value={form.descricao} onChange={(e) => set("descricao", e.target.value)} className={campo} /><p className="mt-1 text-xs text-muted">Aparece embaixo do logo na home.</p></div>
+            <div className="md:col-span-2">
+              <label htmlFor="ap-sobre" className={rotulo}>Sobre a marca (opcional)</label>
+              <textarea id="ap-sobre" rows={5} maxLength={600} value={form.sobre} onChange={(e) => set("sobre", e.target.value)} className={campo + " resize-y"} />
+              <p className="mt-1 flex justify-between text-xs text-muted"><span>Texto que aparece na home, ao lado do logo. Só texto, sem formatação.</span><span>{form.sobre.length}/600</span></p>
+            </div>
+            <div className="md:col-span-2">
+              <label htmlFor="ap-ben" className={rotulo}>Benefício para quem vai (opcional)</label>
+              <input id="ap-ben" maxLength={160} value={form.beneficio} onChange={(e) => set("beneficio", e.target.value)} placeholder="Ex.: 10% de desconto com o código ORBE" className={campo} />
+              <p className="mt-1 text-xs text-muted">Destaque em bronze na home e na página da lista. Só preencha se o apoiador combinou isso.</p>
+            </div>
           </div>
 
           <div>

@@ -109,6 +109,8 @@ export type Apoiador = {
   link: string;
   instagram: string;
   descricao: string;
+  sobre: string;
+  beneficio: string;
   projeto: boolean;
   ativo: boolean;
   ordem: number;
@@ -118,7 +120,7 @@ export function mapApoiador(r: Row): Apoiador {
   const s = (k: string) => (r[k] == null ? "" : String(r[k]));
   return {
     id: s("id"), nome: s("nome"), logoUrl: s("logo_url"), logoBranco: r["logo_branco"] === true,
-    link: s("link"), instagram: s("instagram"), descricao: s("descricao"),
+    link: s("link"), instagram: s("instagram"), descricao: s("descricao"), sobre: s("sobre"), beneficio: s("beneficio"),
     projeto: r["projeto"] === true, ativo: r["ativo"] !== false, ordem: Number(r["ordem"] ?? 0),
   };
 }

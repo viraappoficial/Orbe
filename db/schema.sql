@@ -98,6 +98,8 @@ create table if not exists apoiadores (
   link text,
   instagram text,
   descricao text,
+  sobre text,
+  beneficio text,
   projeto boolean not null default false,
   ativo boolean not null default true,
   ordem int not null default 0,

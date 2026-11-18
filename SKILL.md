@@ -129,3 +129,8 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 
 ## Ferramentas do projeto
 - Skill de revisão de design instalada em `.claude/skills/ui-design` (`/ui-design review` avalia hierarquia, contraste, responsividade em 320 px). Ainda não foi usada no site.
+
+
+## Apoiadores: texto sobre a marca (migrate-006)
+- Colunas `sobre` (até 600 caracteres, texto puro, quebras de linha preservadas) e `beneficio` (até 160, aparece como "Para quem vai") em `apoiadores`. Migração: `db/migrate-006-apoiadores-sobre.sql`.
+- `src/components/Apoio.tsx`: faixa da home com sobre, benefício e botões "Visitar o site" e "Instagram"; na `/lista` o compacto mostra logo e benefício. Editar no painel, aba Apoiadores.

@@ -33,5 +33,5 @@ export type Interessado = {
 
 export type ApoiadorAdmin = {
   id: string; nome: string; logoUrl: string; logoBranco: boolean; link: string; instagram: string;
-  descricao: string; projeto: boolean; ativo: boolean; ordem: number; eventos: string[];
+  descricao: string; sobre: string; beneficio: string; projeto: boolean; ativo: boolean; ordem: number; eventos: string[];
 };

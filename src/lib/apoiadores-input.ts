@@ -4,7 +4,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const CAMPOS_APOIADOR: Record<string, string> = {
   nome: "nome", logoUrl: "logo_url", logoBranco: "logo_branco", link: "link", instagram: "instagram",
-  descricao: "descricao", projeto: "projeto", ativo: "ativo", ordem: "ordem",
+  descricao: "descricao", sobre: "sobre", beneficio: "beneficio", projeto: "projeto", ativo: "ativo", ordem: "ordem",
 };
 
 export type EntradaApoiador = Record<string, unknown>;
@@ -43,6 +43,13 @@ export function validarApoiador(b: EntradaApoiador, criando: boolean): Resultado
   }
 
   if ("descricao" in b) valores.descricao = txt(b.descricao, 160) || null;
+  if ("beneficio" in b) valores.beneficio = txt(b.beneficio, 160) || null;
+  if ("sobre" in b) {
+    // Texto livre com quebras de linha; só limita o tamanho. O site mostra como texto puro (nunca como HTML).
+    const t = String(b.sobre ?? "").replace(/\r\n/g, "\n").trim();
+    if (t.length > 600) return { erro: "O texto sobre a marca passa de 600 caracteres." };
+    valores.sobre = t || null;
+  }
 
   if ("logoUrl" in b) {
     const u = String(b.logoUrl ?? "").trim();
