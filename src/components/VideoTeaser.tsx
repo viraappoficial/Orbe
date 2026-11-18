@@ -39,7 +39,7 @@ export default function VideoTeaser({ src, poster, legenda }: { src: string; pos
   };
 
   return (
-    <div className="relative mx-auto aspect-[9/16] w-full max-w-[19rem] overflow-hidden border border-line bg-black">
+    <div className="relative mx-auto aspect-[9/16] w-full max-w-[22rem] md:max-w-[26rem] overflow-hidden border border-line bg-black">
       <video
         ref={ref}
         src={src}
