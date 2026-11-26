@@ -10,7 +10,7 @@ export const sessions: Session[] = [];
 
 export const links = {
   youtube: "",
-  instagram: "",
+  instagram: "https://www.instagram.com/orbe.rec/",
   tiktok: "",
 };
 
