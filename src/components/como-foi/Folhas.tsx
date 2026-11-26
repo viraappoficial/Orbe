@@ -2,52 +2,52 @@
 
 import { useEffect, useRef } from "react";
 
-// Folhas douradas nos cantos da tela. Balançam sozinhas e deslizam um pouco ao rolar a página.
+// Folha dourada nos cantos (imagem com fundo transparente). Cada uma é uma peça separada:
+// entra "brotando" e balança no próprio ritmo, girando a partir de onde encosta na borda da tela.
+// Ao rolar a página, as folhas deslizam de leve. As duas de cima e as duas de baixo são espelhadas.
+type Folha = { lado: "e" | "d"; pos: "topo" | "baixo"; dur: number; atraso: number; amp: number; entrada: number };
+const FOLHAS: Folha[] = [
+  { lado: "e", pos: "topo", dur: 7.4, atraso: -1.2, amp: 2.2, entrada: 0.15 },
+  { lado: "d", pos: "topo", dur: 8.6, atraso: -4.1, amp: 2.0, entrada: 0.35 },
+  { lado: "e", pos: "baixo", dur: 8.1, atraso: -2.6, amp: 2.6, entrada: 0.55 },
+  { lado: "d", pos: "baixo", dur: 6.9, atraso: -5.3, amp: 2.4, entrada: 0.75 },
+];
+
 export default function Folhas() {
-  const esq = useRef<HTMLDivElement>(null);
-  const dir = useRef<HTMLDivElement>(null);
+  const camada = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let raf = 0;
-    const atualizar = () => {
+    const rolar = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
-        const y = Math.min(window.scrollY * 0.22, 1000);
-        if (esq.current) esq.current.style.transform = `translate3d(0,${-y}px,0)`;
-        if (dir.current) dir.current.style.transform = `translate3d(0,${-y * 0.8}px,0)`;
+        if (camada.current) camada.current.style.transform = `translate3d(0,${-Math.min(window.scrollY * 0.06, 90)}px,0)`;
       });
     };
-    atualizar();
-    window.addEventListener("scroll", atualizar, { passive: true });
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", atualizar);
-    };
+    rolar();
+    window.addEventListener("scroll", rolar, { passive: true });
+    return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", rolar); };
   }, []);
 
   return (
-    <>
-      <div className="cf-folha cf-folha-e" aria-hidden="true">
-        <div ref={esq} className="cf-par">
-          <div className="cf-bal-x cf-bal-x-e">
-            <div className="cf-bal-y cf-bal-y-e">
+    <div className="cf-folhas" aria-hidden="true">
+      <div className="cf-brilho cf-brilho-e" />
+      <div className="cf-brilho cf-brilho-d" />
+      <div ref={camada} className="cf-camada">
+        {FOLHAS.map((f, i) => (
+          <div
+            key={i}
+            className={`cf-ia cf-ia-${f.lado} cf-ia-${f.pos}`}
+            style={{ "--dur": `${f.dur}s`, "--atraso": `${f.atraso}s`, "--amp": `${f.amp}deg`, "--entrada": `${f.entrada}s`, "--dir": f.lado === "e" ? -1 : 1 } as React.CSSProperties}
+          >
+            <div className="cf-ia-bal">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/como-foi/leaf-l.webp" alt="" width={300} height={1920} className="block h-auto w-full" />
+              <img src="/como-foi/folha-ia.webp" alt="" draggable={false} className="block h-full w-full" />
             </div>
           </div>
-        </div>
+        ))}
       </div>
-      <div className="cf-folha cf-folha-d" aria-hidden="true">
-        <div ref={dir} className="cf-par">
-          <div className="cf-bal-x cf-bal-x-d">
-            <div className="cf-bal-y cf-bal-y-d">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/como-foi/leaf-r.webp" alt="" width={300} height={1920} className="block h-auto w-full" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
+    </div>
   );
 }
