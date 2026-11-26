@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { TransitionLink } from "@/components/PageTransition";
 import Reveal from "@/components/Reveal";
 import Wordmark from "@/components/Wordmark";
@@ -10,18 +11,21 @@ import type { Evento } from "@/lib/db";
 import type { Midia } from "@/data/como-foi";
 import { links } from "@/data/sessions";
 
-// Título que chega letra por letra; cada palavra fica inteira (não quebra no meio).
+// Título que chega letra por letra; cada palavra fica inteira (não quebra no meio) e o espaço fica entre elas.
 const letras = (txt: string, atraso: number) => {
   let n = 0;
-  return txt.split(" ").map((palavra, p) => (
-    <span key={p} className="inline-block whitespace-nowrap">
-      {palavra.split("").map((c) => (
-        <span key={n} className="cf-letra" style={{ animationDelay: `${atraso + n++ * 0.07}s` }}>
-          {c}
-        </span>
-      ))}
-      {" "}
-    </span>
+  const palavras = txt.split(" ");
+  return palavras.map((palavra, p) => (
+    <Fragment key={p}>
+      <span className="inline-block whitespace-nowrap">
+        {palavra.split("").map((c) => (
+          <span key={n} className="cf-letra" style={{ animationDelay: `${atraso + n++ * 0.07}s` }}>
+            {c}
+          </span>
+        ))}
+      </span>
+      {p < palavras.length - 1 ? " " : null}
+    </Fragment>
   ));
 };
 

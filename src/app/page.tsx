@@ -21,7 +21,7 @@ export default async function Home() {
   const instagram = links.instagram || process.env.NEXT_PUBLIC_INSTAGRAM || "";
 
   const nav: [string, string][] = [
-    ...(ev ? ([passou ? ["Como foi", "/como-foi"] : ["Próxima", "#proxima"]] as [string, string][]) : []),
+    ...(ev ? ([passou ? ["Ver como foi", "/como-foi"] : ["Próxima", "#proxima"]] as [string, string][]) : []),
     ["O Orbe", "#sobre"],
     ["Sessions", "#sessions"],
     ["Participe", "#participe"],
@@ -121,7 +121,7 @@ export default async function Home() {
               <span className="line-draw mb-6" />
               <h2 className="mb-6 text-xs uppercase tracking-[0.4em] text-muted">Já aconteceu</h2>
               <p className="text-sm uppercase tracking-[0.35em] text-muted">{ev.titulo}</p>
-              <h3 className="mt-3 text-4xl uppercase leading-tight tracking-[0.1em] md:text-6xl md:tracking-[0.15em]">Como foi</h3>
+              <h3 className="mt-3 text-4xl uppercase leading-tight tracking-[0.1em] md:text-6xl md:tracking-[0.15em]">Ver como foi</h3>
               <p className="mt-6 text-2xl tracking-[0.2em] md:mt-8 md:text-3xl">
                 <span className="text-accent">{ev.data}</span> <span className="text-muted">|</span> {ev.local}
               </p>
@@ -133,7 +133,7 @@ export default async function Home() {
                   href="/como-foi"
                   className="block w-full border border-white px-6 py-4 text-center text-xs uppercase tracking-[0.3em] transition-colors hover:border-accent hover:bg-accent hover:text-black sm:inline-block sm:w-auto sm:px-10"
                 >
-                  Ver como foi
+                  Entrar
                 </TransitionLink>
                 {instagram && (
                   <a
