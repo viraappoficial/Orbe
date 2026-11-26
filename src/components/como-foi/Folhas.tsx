@@ -5,8 +5,6 @@ import { useEffect, useRef } from "react";
 // Folhas douradas da arte da ORBE, uma em cada canto. Cada folha é desenhada num <canvas> e ondula como se um
 // vento passasse: o pé (a quina da tela) fica parado e as pontas se mexem mais. Rajadas lentas dão variação.
 // Respeita "reduzir movimento" (fica parada) e pausa quando a aba está escondida.
-// Vento criado pela rolagem: energia (0 a 1, decai sozinha) e fase (as ondas "andam" conforme a página rola).
-const vento = { energia: 0, fase: 0 };
 type Peca = "c1" | "c2";
 type Folha = { canto: "se" | "sd" | "ie" | "id"; peca: Peca; entrada: number; semente: number };
 const FOLHAS: Folha[] = [
@@ -41,8 +39,7 @@ function Onda({ src, peca, semente, entrada }: { src: string; peca: Peca; sement
       const p = reduz ? 1 : Math.min(1, Math.max(0, (t - inicio - entrada) / 3.6));
       const cresce = p * p * (3 - 2 * p);
       const gust = 0.7 + 0.3 * Math.sin(t * 0.37 + semente) + 0.15 * Math.sin(t * 0.91 + semente * 2);
-      const A = reduz ? 0 : gust + vento.energia * 0.7 + 1.7 * Math.pow(1 - p, 2) * Math.sin(Math.min(1, p * 1.3) * Math.PI);
-      const f = vento.fase;
+      const A = reduz ? 0 : gust + 1.7 * Math.pow(1 - p, 2) * Math.sin(Math.min(1, p * 1.3) * Math.PI);
       const ax = W * 0.034 * A, ay = W * 0.03 * A;           // quanto as pontas se afastam, em pixels
       // 1ª passada: fatias verticais sobem e descem (mais forte longe do pé)
       meio.width = W; meio.height = H; mctx.clearRect(0, 0, W, H);
@@ -50,7 +47,7 @@ function Onda({ src, peca, semente, entrada }: { src: string; peca: Peca; sement
       for (let x = 0; x < W; x += passo) {
         const un = x / W, dist = Math.abs(un - pe.x);
         const peso = Math.pow(dist, 1.5);
-        const dy = ay * peso * (Math.sin(un * 7.2 + t * 1.25 + semente + f) + 0.45 * Math.sin(un * 13 + t * 2.1 + semente * 1.7 + f * 1.6));
+        const dy = ay * peso * (Math.sin(un * 7.2 + t * 1.25 + semente) + 0.45 * Math.sin(un * 13 + t * 2.1 + semente * 1.7));
         mctx.drawImage(img, (x / W) * img.width, 0, (passo / W) * img.width + 0.5, img.height, x, dy, passo + 0.5, H);
       }
       // 2ª passada: fatias horizontais vão para os lados
@@ -58,7 +55,7 @@ function Onda({ src, peca, semente, entrada }: { src: string; peca: Peca; sement
       for (let y = 0; y < H; y += passo) {
         const vn = y / H, dist = Math.abs(vn - pe.y);
         const peso = Math.pow(dist, 1.5);
-        const dx = ax * peso * (Math.sin(vn * 6.1 + t * 1.05 + semente * 1.3 + f * 0.8) + 0.45 * Math.sin(vn * 11 + t * 1.9 + semente + f * 1.3));
+        const dx = ax * peso * (Math.sin(vn * 6.1 + t * 1.05 + semente * 1.3) + 0.45 * Math.sin(vn * 11 + t * 1.9 + semente));
         ctx.drawImage(meio, 0, y, W, passo + 0.5, dx, y, W, passo + 0.5);
       }
       // máscara de crescimento: só aparece o que está até um certo raio do pé, com borda macia
@@ -103,43 +100,14 @@ function Onda({ src, peca, semente, entrada }: { src: string; peca: Peca; sement
   return <canvas ref={ref} width={dim.w} height={dim.h} className="block h-auto w-full" />;
 }
 
-const SINAL: Record<Folha["canto"], number> = { se: -1, sd: 1, ie: -1, id: 1 };
-
 export default function Folhas() {
-  const raiz = useRef<HTMLDivElement>(null);
-
-  // A rolagem vira vento: a velocidade inclina as folhas (em volta do pé, na quina, então o corte nunca aparece)
-  // e dá mais onda; quando para de rolar, tudo acalma. A camada em si não se mexe, só as folhas.
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const el = raiz.current;
-    if (!el) return;
-    const alvos = Array.from(el.querySelectorAll<HTMLElement>("[data-inclina]"));
-    let raf = 0, y0 = window.scrollY, t0 = performance.now(), vSuave = 0, incl = 0;
-    const loop = (agora: number) => {
-      raf = requestAnimationFrame(loop);
-      const dt = Math.max(1, Math.min(100, agora - t0)); t0 = agora;
-      const y = window.scrollY, v = ((y - y0) / dt) * 1000; y0 = y;           // px por segundo
-      vSuave += (v - vSuave) * 0.05;                                            // a roda do mouse dá saltos: suaviza bastante
-      const alvo = Math.max(-1, Math.min(1, vSuave / 2600));
-      incl += (alvo - incl) * 0.045;
-      vento.energia = Math.max(vento.energia * 0.985, Math.min(0.55, Math.abs(vSuave) / 3200));
-      // a onda só "anda" devagar com a rolagem (no máximo ~0,6 rad/s) em vez de seguir cada pixel
-      vento.fase += Math.max(-1, Math.min(1, vSuave / 2200)) * 0.6 * (dt / 1000);
-      for (const a of alvos) a.style.transform = `rotate(${(incl * 1.2 * Number(a.dataset.inclina)).toFixed(3)}deg)`;
-    };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, []);
-
+  // As folhas ficam fixas na tela: rolar a página não mexe nelas. Só o balanço (vento) próprio de cada uma.
   return (
-    <div ref={raiz} className="cf-folhas" aria-hidden="true">
+    <div className="cf-folhas" aria-hidden="true">
       <div className="cf-camada">
         {FOLHAS.map((f, i) => (
           <div key={i} className={`cf-ia cf-c-${f.canto} cf-p-${f.peca}`} style={{ "--entrada": `${f.entrada}s` } as React.CSSProperties}>
-            <div className="cf-incl" data-inclina={SINAL[f.canto]}>
-              <Onda src={`/como-foi/folhas/${f.peca}.webp`} peca={f.peca} semente={f.semente} entrada={f.entrada} />
-            </div>
+            <Onda src={`/como-foi/folhas/${f.peca}.webp`} peca={f.peca} semente={f.semente} entrada={f.entrada} />
           </div>
         ))}
       </div>
