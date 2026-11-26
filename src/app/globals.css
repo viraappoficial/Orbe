@@ -260,8 +260,9 @@ html, body { overflow-x: hidden; overflow-x: clip; }
 /* sobra de 22px para fora da tela, para o balanço nunca mostrar o corte */
 .cf-c-se { top: -22px; left: -78px; } .cf-c-sd { top: -22px; right: -78px; }
 .cf-c-ie { bottom: -22px; left: -22px; } .cf-c-id { bottom: -22px; right: -22px; }
-.cf-c-se { transform-origin: 0 0; } .cf-c-sd { transform-origin: 100% 0; }
-.cf-c-ie { transform-origin: 0 100%; } .cf-c-id { transform-origin: 100% 100%; }
+.cf-c-se, .cf-c-se .cf-incl { transform-origin: 0 0; } .cf-c-sd, .cf-c-sd .cf-incl { transform-origin: 100% 0; }
+.cf-c-ie, .cf-c-ie .cf-incl { transform-origin: 0 100%; } .cf-c-id, .cf-c-id .cf-incl { transform-origin: 100% 100%; }
+.cf-incl { will-change: transform; }
 /* c1 original sai da quina de cima-esquerda; c2 original da quina de baixo-direita. Os outros cantos são espelhos. */
 .cf-c-sd canvas { transform: scaleX(-1); } .cf-c-ie canvas { transform: scaleX(-1); }
 @media (max-width: 767px) { .cf-camada { --s: clamp(.2px, .0525vw, .3px); } .cf-c-se { left: -64px; } .cf-c-sd { right: -64px; } }
