@@ -2,7 +2,7 @@ import { TransitionLink } from "@/components/PageTransition";
 import Reveal from "@/components/Reveal";
 import Wordmark from "@/components/Wordmark";
 import ImagemAmpliavel from "@/components/ImagemAmpliavel";
-import VideoTeaser from "@/components/VideoTeaser";
+import Carrossel from "@/components/como-foi/Carrossel";
 import Apoio from "@/components/Apoio";
 import Folhas from "@/components/como-foi/Folhas";
 import { getApoiadores } from "@/lib/db";
@@ -96,12 +96,8 @@ export default async function ComoFoiPagina({ ev, midias }: { ev: Evento; midias
             <h2 className="px-[max(2.5rem,12vw)] text-center text-xs uppercase tracking-[0.4em] text-muted md:px-12">Em movimento</h2>
           </Reveal>
           <Reveal delay={150}>
-            <div className="cf-trilho mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-[max(2.5rem,12vw)] pb-6 md:justify-center md:gap-6 md:px-12">
-              {videos.map((v) => (
-                <div key={v.id} className="w-[58vw] max-w-[17rem] shrink-0 snap-center md:w-[16rem]">
-                  <VideoTeaser src={v.url} poster={v.poster} legenda={v.legenda || `Vídeo da ${ev.titulo}`} className="w-full" />
-                </div>
-              ))}
+            <div className="mt-12">
+              <Carrossel itens={videos.map((v) => ({ id: v.id, url: v.url, poster: v.poster, legenda: v.legenda || `Vídeo da ${ev.titulo}` }))} />
             </div>
           </Reveal>
         </section>

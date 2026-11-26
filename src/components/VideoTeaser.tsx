@@ -8,11 +8,13 @@ export default function VideoTeaser({
   poster,
   legenda,
   className = "mx-auto w-full max-w-[22rem] md:max-w-[26rem]",
+  ativo,
 }: {
   src: string;
   poster: string;
   legenda: string;
   className?: string;
+  ativo?: boolean; // se informado, só toca enquanto for true (usado pelo carrossel)
 }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [mudo, setMudo] = useState(true);
@@ -23,6 +25,7 @@ export default function VideoTeaser({
     if (!v) return;
     const reduz = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduz) return;
+    if (ativo !== undefined) return; // quem manda é o carrossel (efeito abaixo)
     const io = new IntersectionObserver(
       ([e]) => {
         if (e.isIntersecting) v.play().catch(() => {});
@@ -32,7 +35,14 @@ export default function VideoTeaser({
     );
     io.observe(v);
     return () => io.disconnect();
-  }, []);
+  }, [ativo]);
+
+  useEffect(() => {
+    const v = ref.current;
+    if (!v || ativo === undefined) return;
+    if (ativo && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) v.play().catch(() => {});
+    else { v.pause(); if (!ativo) { v.muted = true; setMudo(true); } }
+  }, [ativo]);
 
   const alternarSom = () => {
     const v = ref.current;
@@ -64,7 +74,7 @@ export default function VideoTeaser({
         onClick={alternarPlay}
         className="h-full w-full cursor-pointer object-cover"
       />
-      {!tocando && (
+      {!tocando && ativo !== false && (
         <button
           type="button"
           onClick={alternarPlay}
@@ -76,6 +86,7 @@ export default function VideoTeaser({
           </span>
         </button>
       )}
+      {ativo !== false && (
       <button
         type="button"
         onClick={alternarSom}
@@ -84,6 +95,7 @@ export default function VideoTeaser({
       >
         {mudo ? "Ligar som" : "Som ligado"}
       </button>
+      )}
     </div>
   );
 }
