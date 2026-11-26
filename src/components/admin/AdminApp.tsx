@@ -8,9 +8,10 @@ import ListaPanel from "./ListaPanel";
 import EventosPanel from "./EventosPanel";
 import InteressadosPanel from "./InteressadosPanel";
 import ApoiadoresPanel from "./ApoiadoresPanel";
+import MidiasPanel from "./MidiasPanel";
 
 export default function AdminApp() {
-  const [aba, setAba] = useState<"lista" | "eventos" | "interessados" | "apoiadores">("lista");
+  const [aba, setAba] = useState<"lista" | "eventos" | "interessados" | "apoiadores" | "midias">("lista");
   const [novos, setNovos] = useState(0);
   const [eventos, setEventos] = useState<EventoAdmin[] | null>(null);
   const [erro, setErro] = useState("");
@@ -34,7 +35,7 @@ export default function AdminApp() {
     window.location.href = "/admin/login";
   }
 
-  const aba_ = (id: "lista" | "eventos" | "interessados" | "apoiadores", rotulo: string) => (
+  const aba_ = (id: "lista" | "eventos" | "interessados" | "apoiadores" | "midias", rotulo: string) => (
     <button
       type="button"
       onClick={() => setAba(id)}
@@ -66,6 +67,7 @@ export default function AdminApp() {
         {aba_("eventos", "Eventos")}
         {aba_("interessados", novos > 0 ? `Interessados (${novos})` : "Interessados")}
         {aba_("apoiadores", "Apoiadores")}
+        {aba_("midias", "Mídias")}
       </nav>
 
       {erro && <p role="alert" className="mt-6 text-sm text-[#ff8a8a]">⚠ {erro}</p>}
@@ -75,6 +77,7 @@ export default function AdminApp() {
       {eventos && aba === "eventos" && <EventosPanel eventos={eventos} recarregar={carregar} />}
       {aba === "interessados" && <InteressadosPanel aoMudar={setNovos} />}
       {eventos && aba === "apoiadores" && <ApoiadoresPanel eventos={eventos} />}
+      {eventos && aba === "midias" && <MidiasPanel eventos={eventos} />}
     </div>
   );
 }

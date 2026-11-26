@@ -3,7 +3,17 @@
 import { useEffect, useRef, useState } from "react";
 
 // Vídeo vertical curto. Toca mudo quando aparece na tela e pausa quando sai; o botão liga o som.
-export default function VideoTeaser({ src, poster, legenda }: { src: string; poster: string; legenda: string }) {
+export default function VideoTeaser({
+  src,
+  poster,
+  legenda,
+  className = "mx-auto w-full max-w-[22rem] md:max-w-[26rem]",
+}: {
+  src: string;
+  poster: string;
+  legenda: string;
+  className?: string;
+}) {
   const ref = useRef<HTMLVideoElement>(null);
   const [mudo, setMudo] = useState(true);
   const [tocando, setTocando] = useState(false);
@@ -39,7 +49,7 @@ export default function VideoTeaser({ src, poster, legenda }: { src: string; pos
   };
 
   return (
-    <div className="relative mx-auto aspect-[9/16] w-full max-w-[22rem] md:max-w-[26rem] overflow-hidden border border-line bg-black">
+    <div className={`relative aspect-[9/16] overflow-hidden border border-line bg-black ${className}`}>
       <video
         ref={ref}
         src={src}

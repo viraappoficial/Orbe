@@ -1,5 +1,6 @@
 import { neon } from "@neondatabase/serverless";
 import { grupoWhatsapp, proxima } from "@/data/sessions";
+import type { Midia } from "@/data/como-foi";
 
 export type Row = Record<string, unknown>;
 
@@ -141,4 +142,51 @@ export async function getApoiadores(eventoId?: string): Promise<Apoiador[]> {
   } catch {
     return [];
   }
+}
+
+
+// ---------- Mídias da página "Como foi" ----------
+import { eventoPassou, slugEvento } from "@/lib/evento-data";
+
+export function mapMidia(r: Row): Midia {
+  return {
+    id: String(r.id),
+    tipo: r.tipo === "video" ? "video" : "foto",
+    url: String(r.url),
+    poster: r.poster == null ? "" : String(r.poster),
+    legenda: r.legenda == null ? "" : String(r.legenda),
+    w: Number(r.largura) || 900,
+    h: Number(r.altura) || 1350,
+    ordem: Number(r.ordem) || 0,
+    capa: !!r.capa,
+  };
+}
+
+/** Mídias ativas de uma session, na ordem escolhida no painel. Sem banco (ou sem a tabela), null. */
+export async function getMidias(eventoId: string): Promise<Midia[] | null> {
+  try {
+    const sql = getSql();
+    const rows = (await sql`
+      select id, tipo, url, poster, legenda, largura, altura, ordem, capa
+      from midias where evento_id = ${eventoId}::uuid and ativo order by ordem asc, created_at asc`) as Row[];
+    return rows.map(mapMidia);
+  } catch {
+    return null;
+  }
+}
+
+/** Sessions publicadas que já aconteceram, da mais nova para a mais antiga. */
+export async function getEventosPassados(): Promise<Evento[]> {
+  try {
+    const sql = getSql();
+    const rows = (await sql`select * from eventos where status = 'publicado' order by created_at desc`) as Row[];
+    return rows.map(mapEvento).filter((e) => eventoPassou(e));
+  } catch {
+    return eventoPassou(fallback) ? [fallback] : [];
+  }
+}
+
+export async function getEventoPorSlug(slug: string): Promise<Evento | null> {
+  const lista = await getEventosPassados();
+  return lista.find((e) => slugEvento(e.titulo) === slug) ?? null;
 }
