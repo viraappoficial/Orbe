@@ -13,10 +13,12 @@ const jost = Jost({
 });
 
 // Base para montar o endereço completo da imagem de prévia (WhatsApp, Instagram).
-// Em produção usa o domínio principal da Vercel; troque por NEXT_PUBLIC_SITE_URL ao ter domínio próprio.
+// Em produção usa o domínio próprio (orbe.rec.br); NEXT_PUBLIC_SITE_URL, se existir, tem prioridade.
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+  (process.env.VERCEL_ENV === "production"
+    ? "https://orbe.rec.br"
+    : process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : "http://localhost:3000");
 

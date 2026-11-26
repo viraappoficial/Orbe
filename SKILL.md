@@ -24,7 +24,7 @@ Lema: **Música · Atmosfera · Conexões**. Idioma do site: português (pt-BR).
 | `DATABASE_URL` | Conexão do Neon. Só o servidor lê. Sem ela a lista responde 503 e as páginas usam o plano B. |
 | `ADMIN_USER` / `ADMIN_PASSWORD` | Login do painel. Sem a senha o login responde 503 (painel desligado). |
 | `SESSION_SECRET` | Opcional. Chave do cookie de login. Sem ela, usa senha + `DATABASE_URL`. |
-| `NEXT_PUBLIC_SITE_URL` | Opcional. Domínio principal (prévia de link). Padrão: o domínio da Vercel. |
+| `NEXT_PUBLIC_SITE_URL` | Opcional. Domínio principal (prévia de link). Padrão em produção: `https://orbe.rec.br`. |
 | `NEXT_PUBLIC_WHATSAPP_GROUP` | Opcional. Plano B do link do grupo; o normal é o campo do evento no painel. |
 
 ## Onde fica cada coisa
