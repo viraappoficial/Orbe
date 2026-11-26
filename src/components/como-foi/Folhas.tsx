@@ -6,10 +6,10 @@ import { useEffect, useRef } from "react";
 // tela (onde o corte da imagem fica escondido), entra "brotando" e balança no próprio ritmo, girando a partir
 // do ponto onde encosta. Ao rolar a página, o conjunto desliza de leve.
 const PECAS = {
-  a: { w: 295, h: 277, py: 0.45, amp: 1.6 },
-  b: { w: 223, h: 218, py: 0.35, amp: 2.3 },
-  c: { w: 187, h: 257, py: 0.5, amp: 2.8 },
-  d: { w: 230, h: 242, py: 0.45, amp: 2.3 },
+  a: { w: 295, h: 280, py: 0.45, amp: 1.6 },
+  b: { w: 224, h: 223, py: 0.35, amp: 2.3 },
+  c: { w: 188, h: 258, py: 0.5, amp: 2.8 },
+  d: { w: 231, h: 243, py: 0.45, amp: 2.3 },
 } as const;
 type Peca = keyof typeof PECAS;
 
