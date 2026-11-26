@@ -267,7 +267,7 @@ html, body { overflow-x: hidden; overflow-x: clip; }
 .cf-ia-baixo { --h: 46vh; }
 .cf-ia-e { left: -3.5vw; } .cf-ia-d { right: -3.5vw; }
 .cf-ia-topo { top: -5vh; } .cf-ia-baixo { top: 66vh; }
-.cf-ia-bal { width: 100%; height: 100%; animation: cfBalanca var(--dur) ease-in-out var(--atraso) infinite; will-change: transform; filter: drop-shadow(0 8px 14px rgba(0,0,0,.6)) drop-shadow(0 0 22px rgba(201,151,90,.18)); }
+.cf-ia-bal { width: 100%; height: 100%; opacity: .5; animation: cfBalanca var(--dur) ease-in-out var(--atraso) infinite; will-change: transform; filter: drop-shadow(0 8px 14px rgba(0,0,0,.45)) drop-shadow(0 0 22px rgba(201,151,90,.12)); }
 /* o pé da folha fica na borda: a de cima gira a partir de baixo-esquerda; a de baixo (de cabeça para baixo) a partir de cima */
 .cf-ia-e.cf-ia-topo .cf-ia-bal, .cf-ia-e.cf-ia-topo { transform-origin: 0% 88%; }
 .cf-ia-d.cf-ia-topo .cf-ia-bal, .cf-ia-d.cf-ia-topo { transform-origin: 100% 88%; }
