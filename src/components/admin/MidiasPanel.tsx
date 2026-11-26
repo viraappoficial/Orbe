@@ -104,14 +104,26 @@ export default function MidiasPanel({ eventos }: { eventos: EventoAdmin[] }) {
     try { await api(`/api/admin/midias/${m.id}`, { method: "DELETE" }); await carregar(); }
     catch (e) { setMsg({ tipo: "erro", texto: e instanceof Error ? e.message : "Erro ao apagar" }); }
   }
-  async function mover(i: number, d: -1 | 1) {
-    if (!midias) return;
-    const j = i + d; if (j < 0 || j >= midias.length) return;
-    const nova = [...midias]; [nova[i], nova[j]] = [nova[j], nova[i]]; setMidias(nova);
-    try { await api("/api/admin/midias/ordem", { method: "POST", body: JSON.stringify({ eventoId, ids: nova.map((x) => x.id) }) }); }
+  // Ordem completa que vai para o servidor: capa, vídeos do carrossel, fotos, ocultas.
+  const montar = (v: MidiaAdmin[], f: MidiaAdmin[]) => [...(capa ? [capa] : []), ...v, ...f, ...ocultas];
+  async function salvarOrdem(lista: MidiaAdmin[]) {
+    setMidias(lista);
+    try { await api("/api/admin/midias/ordem", { method: "POST", body: JSON.stringify({ eventoId, ids: lista.map((x) => x.id) }) }); }
     catch (e) { setMsg({ tipo: "erro", texto: e instanceof Error ? e.message : "Erro ao reordenar" }); carregar(); }
   }
+  async function mover(sec: "videos" | "fotos", i: number, para: number) {
+    const lista = sec === "videos" ? [...videos] : [...fotos];
+    if (para < 0 || para >= lista.length || para === i) return;
+    const [m] = lista.splice(i, 1); lista.splice(para, 0, m);
+    await salvarOrdem(sec === "videos" ? montar(lista, fotos) : montar(videos, lista));
+  }
 
+  const todas = midias ?? [];
+  const capa = todas.find((m) => m.tipo === "video" && m.capa && m.ativo) ?? null;
+  const videos = todas.filter((m) => m.tipo === "video" && m.ativo && m !== capa);
+  const fotos = todas.filter((m) => m.tipo === "foto" && m.ativo);
+  const ocultas = todas.filter((m) => !m.ativo);
+  const capaOculta = todas.find((m) => m.tipo === "video" && m.capa && !m.ativo);
   const botao = "border border-line px-3 py-2 text-[0.65rem] uppercase tracking-[0.2em] text-muted transition-colors hover:border-white hover:text-white disabled:opacity-40";
   const sessao = publicados.find((e) => e.id === eventoId);
   const ocupado = envios.some((x) => !x.erro && x.etapa !== "Pronto");
@@ -170,29 +182,93 @@ export default function MidiasPanel({ eventos }: { eventos: EventoAdmin[] }) {
 
       {midias === null ? (
         <p className="text-sm text-muted">Carregando…</p>
-      ) : midias.length === 0 ? (
-        <p className="text-sm text-muted">Nenhuma mídia nesta session ainda. Envie acima.</p>
       ) : (
-        <ul className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {midias.map((m, i) => (
-            <li key={m.id} className={`border border-line ${m.ativo ? "" : "opacity-45"}`}>
-              <div className="relative aspect-[3/4] overflow-hidden bg-black">
+        <div className="space-y-12">
+          <p className="text-sm text-muted">
+            <b className="text-white">{videos.length}</b> vídeo{videos.length === 1 ? "" : "s"} no carrossel · <b className="text-white">{fotos.length}</b> foto{fotos.length === 1 ? "" : "s"} no mosaico ·{" "}
+            <b className="text-white">{capa ? 1 : 0}</b> capa · <b className="text-white">{ocultas.length}</b> oculta{ocultas.length === 1 ? "" : "s"} (fora do site). Os números mostram a ordem em que aparecem na página.
+          </p>
+
+          <div>
+            <h3 className="text-xs uppercase tracking-[0.3em] text-accent">Capa da abertura</h3>
+            <p className="mb-4 mt-1 text-xs text-muted">O vídeo que toca no fundo, quando a pessoa abre a página. Ele não aparece no carrossel.</p>
+            {capa ? (
+              <div className="flex max-w-md items-center gap-4 border border-accent p-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={m.tipo === "video" ? m.poster : m.url} alt="" className="h-full w-full object-cover" loading="lazy" />
-                <span className="absolute left-2 top-2 bg-black/70 px-2 py-1 text-[0.6rem] uppercase tracking-[0.2em]">
-                  {m.tipo === "video" ? (m.capa ? "Vídeo · capa" : "Vídeo") : "Foto"}{m.ativo ? "" : " · oculta"}
-                </span>
+                <img src={capa.poster} alt="" className="h-28 w-16 shrink-0 object-cover" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm">Esta é a capa agora</p>
+                  <div className="mt-3 flex flex-wrap gap-1">
+                    <button type="button" className={botao} onClick={() => mudar(capa, { capa: false })}>Tirar capa</button>
+                    <button type="button" className={botao} onClick={() => mudar(capa, { ativo: false })}>Ocultar</button>
+                  </div>
+                </div>
               </div>
-              <div className="flex flex-wrap gap-1 p-2">
-                <button type="button" className={botao} onClick={() => mover(i, -1)} disabled={i === 0} aria-label="Mover para antes">←</button>
-                <button type="button" className={botao} onClick={() => mover(i, 1)} disabled={i === midias.length - 1} aria-label="Mover para depois">→</button>
-                <button type="button" className={botao} onClick={() => mudar(m, { ativo: !m.ativo })}>{m.ativo ? "Ocultar" : "Mostrar"}</button>
-                {m.tipo === "video" && <button type="button" className={botao} onClick={() => mudar(m, { capa: !m.capa })}>{m.capa ? "Tirar capa" : "Usar de capa"}</button>}
-                <button type="button" className={`${botao} hover:!border-red-400 hover:!text-red-400`} onClick={() => apagar(m)}>Apagar</button>
-              </div>
-            </li>
+            ) : (
+              <p className="max-w-md border border-line px-4 py-3 text-sm text-muted">
+                {capaOculta ? "A capa escolhida está oculta. " : "Nenhuma capa escolhida. "}
+                Enquanto isso, a página usa o <b className="text-white">primeiro vídeo</b> da lista. Para escolher, clique em <b className="text-white">Usar de capa</b> num vídeo abaixo.
+              </p>
+            )}
+          </div>
+
+          {[
+            { sec: "videos" as const, titulo: "Vídeos do carrossel", ajuda: "Seção “Em movimento”. Aparecem nesta ordem.", lista: videos },
+            { sec: "fotos" as const, titulo: "Fotos do mosaico", ajuda: "Seção “Momentos”. Aparecem nesta ordem.", lista: fotos },
+          ].map(({ sec, titulo, ajuda, lista }) => (
+            <div key={sec}>
+              <h3 className="text-xs uppercase tracking-[0.3em] text-accent">{titulo} <span className="text-muted">({lista.length})</span></h3>
+              <p className="mb-4 mt-1 text-xs text-muted">{ajuda}</p>
+              {lista.length === 0 ? (
+                <p className="text-sm text-muted">Nada aqui ainda. Envie acima.</p>
+              ) : (
+                <ul className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                  {lista.map((m, i) => (
+                    <li key={m.id} className="border border-line">
+                      <div className="relative aspect-[3/4] overflow-hidden bg-black">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={m.tipo === "video" ? m.poster : m.url} alt="" className="h-full w-full object-cover" loading="lazy" />
+                        <span className="absolute left-2 top-2 flex h-7 min-w-7 items-center justify-center bg-accent px-2 text-xs font-medium text-black" aria-label={`Posição ${i + 1}`}>{i + 1}</span>
+                        <span className="absolute right-2 top-2 bg-black/70 px-2 py-1 text-[0.6rem] uppercase tracking-[0.2em]">{m.tipo === "video" ? "Vídeo" : "Foto"}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1 p-2">
+                        <button type="button" className={botao} onClick={() => mover(sec, i, 0)} disabled={i === 0} aria-label="Mover para o início" title="Para o início">⇤</button>
+                        <button type="button" className={botao} onClick={() => mover(sec, i, i - 1)} disabled={i === 0} aria-label="Mover para antes">←</button>
+                        <button type="button" className={botao} onClick={() => mover(sec, i, i + 1)} disabled={i === lista.length - 1} aria-label="Mover para depois">→</button>
+                        <button type="button" className={botao} onClick={() => mover(sec, i, lista.length - 1)} disabled={i === lista.length - 1} aria-label="Mover para o fim" title="Para o fim">⇥</button>
+                        <button type="button" className={botao} onClick={() => mudar(m, { ativo: false })}>Ocultar</button>
+                        {m.tipo === "video" && <button type="button" className={botao} onClick={() => mudar(m, { capa: true })}>Usar de capa</button>}
+                        <button type="button" className={`${botao} hover:!border-red-400 hover:!text-red-400`} onClick={() => apagar(m)}>Apagar</button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           ))}
-        </ul>
+
+          {ocultas.length > 0 && (
+            <div>
+              <h3 className="text-xs uppercase tracking-[0.3em] text-accent">Ocultas <span className="text-muted">({ocultas.length})</span></h3>
+              <p className="mb-4 mt-1 text-xs text-muted">Não aparecem no site. Clique em Mostrar para voltarem.</p>
+              <ul className="grid grid-cols-3 gap-3 md:grid-cols-6">
+                {ocultas.map((m) => (
+                  <li key={m.id} className="border border-line opacity-60 transition-opacity hover:opacity-100">
+                    <div className="relative aspect-[3/4] overflow-hidden bg-black">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={m.tipo === "video" ? m.poster : m.url} alt="" className="h-full w-full object-cover grayscale" loading="lazy" />
+                      <span className="absolute right-1 top-1 bg-black/70 px-1.5 py-0.5 text-[0.55rem] uppercase tracking-[0.2em]">{m.tipo === "video" ? "Vídeo" : "Foto"}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1 p-1.5">
+                      <button type="button" className={botao} onClick={() => mudar(m, { ativo: true })}>Mostrar</button>
+                      <button type="button" className={`${botao} hover:!border-red-400 hover:!text-red-400`} onClick={() => apagar(m)}>Apagar</button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       )}
     </section>
   );
