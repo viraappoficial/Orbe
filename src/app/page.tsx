@@ -18,10 +18,11 @@ export default async function Home() {
   const [ev, sessoes] = await Promise.all([getEventoAtual(), getSessoesPublicadas()]);
   const apoiadores = await getApoiadores(ev?.id);
   const passou = ev ? eventoPassou(ev) : false; // depois do dia do evento, entra o "Como foi" no lugar do "Próxima session"
+  const outras = sessoes.filter((x) => !(passou && ev && x.id === ev.id)); // as que já têm vídeo, sem repetir a session do cartão acima
   const instagram = links.instagram || process.env.NEXT_PUBLIC_INSTAGRAM || "";
 
   const nav: [string, string][] = [
-    ...(ev ? ([passou ? ["Ver como foi", "/como-foi"] : ["Próxima", "#proxima"]] as [string, string][]) : []),
+    ...(ev && !passou ? ([["Próxima", "#proxima"]] as [string, string][]) : []),
     ["O Orbe", "#sobre"],
     ["Sessions", "#sessions"],
     ["Participe", "#participe"],
@@ -79,7 +80,7 @@ export default async function Home() {
             </TransitionLink>
           ) : (
             <a
-              href={ev ? (passou ? "#como-foi" : "#proxima") : "#sobre"}
+              href={ev ? (passou ? "#sessions" : "#proxima") : "#sobre"}
               className="fadeup relative mt-10 border border-line px-8 py-4 text-xs uppercase tracking-[0.3em] text-muted transition-colors hover:border-white hover:text-white sm:px-10"
             >
               {ev ? (passou ? "Veja como foi" : "Lista encerrada") : "Conheça o Orbe"}
@@ -94,62 +95,6 @@ export default async function Home() {
           <span className="scroll-cue" />
         </span>
       </section>
-
-      {ev && passou && (
-        <section id="como-foi" className="border-t border-line px-5 py-16 sm:px-8 md:px-12 md:py-32">
-          <div className="mx-auto grid max-w-5xl items-center gap-10 md:grid-cols-2 md:gap-20">
-            <Reveal from="left">
-              <TransitionLink
-                href="/como-foi"
-                aria-label="Ver como foi a session"
-                className="group relative mx-auto block aspect-[4/5] w-full max-w-md overflow-hidden border border-line bg-black"
-              >
-                <LoopVideo
-                  src={comoFoiInfo.hero}
-                  poster={comoFoiInfo.heroPoster}
-                  className="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform duration-[1600ms] ease-out group-hover:scale-105"
-                />
-                <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" aria-hidden="true" />
-                <span className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
-                  <span className="flex h-20 w-20 items-center justify-center rounded-full border border-white/80 bg-black/30 text-white backdrop-blur transition-colors group-hover:border-accent group-hover:text-accent">
-                    <svg width="20" height="20" viewBox="0 0 18 18" fill="currentColor"><path d="M5 3l10 6-10 6z" /></svg>
-                  </span>
-                </span>
-              </TransitionLink>
-            </Reveal>
-            <Reveal delay={200} from="right">
-              <span className="line-draw mb-6" />
-              <h2 className="mb-6 text-xs uppercase tracking-[0.4em] text-muted">Já aconteceu</h2>
-              <p className="text-sm uppercase tracking-[0.35em] text-muted">{ev.titulo}</p>
-              <h3 className="mt-3 text-4xl uppercase leading-tight tracking-[0.1em] md:text-6xl md:tracking-[0.15em]">Ver como foi</h3>
-              <p className="mt-6 text-2xl tracking-[0.2em] md:mt-8 md:text-3xl">
-                <span className="text-accent">{ev.data}</span> <span className="text-muted">|</span> {ev.local}
-              </p>
-              <p className="mt-6 max-w-md text-base leading-relaxed text-muted">
-                Vídeos e fotos da primeira live session da ORBE. Entre e reviva a noite.
-              </p>
-              <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-                <TransitionLink
-                  href="/como-foi"
-                  className="block w-full border border-white px-6 py-4 text-center text-xs uppercase tracking-[0.3em] transition-colors hover:border-accent hover:bg-accent hover:text-black sm:inline-block sm:w-auto sm:px-10"
-                >
-                  Entrar
-                </TransitionLink>
-                {instagram && (
-                  <a
-                    href={instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full border border-line px-6 py-4 text-center text-xs uppercase tracking-[0.3em] text-muted transition-colors hover:border-white hover:text-white sm:inline-block sm:w-auto sm:px-10"
-                  >
-                    Instagram
-                  </a>
-                )}
-              </div>
-            </Reveal>
-          </div>
-        </section>
-      )}
 
       {ev && !passou && (
         <section id="proxima" className="border-t border-line px-5 py-16 sm:px-8 md:px-12 md:py-32">
@@ -223,13 +168,68 @@ export default async function Home() {
           <span className="line-draw mb-6" />
           <h2 className="mb-12 text-xs uppercase tracking-[0.4em] text-muted md:mb-16">Sessions</h2>
         </Reveal>
-        {sessoes.length === 0 ? (
+        {ev && passou && (
+          <div className={outras.length ? "mb-20 md:mb-28" : ""} id="como-foi">
+              <div className="mx-auto grid max-w-5xl items-center gap-10 md:grid-cols-2 md:gap-20">
+                <Reveal from="left">
+                  <TransitionLink
+                    href="/como-foi"
+                    aria-label="Ver como foi a session"
+                    className="group relative mx-auto block aspect-[4/5] w-full max-w-md overflow-hidden border border-line bg-black"
+                  >
+                    <LoopVideo
+                      src={comoFoiInfo.hero}
+                      poster={comoFoiInfo.heroPoster}
+                      className="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform duration-[1600ms] ease-out group-hover:scale-105"
+                    />
+                    <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" aria-hidden="true" />
+                    <span className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
+                      <span className="flex h-20 w-20 items-center justify-center rounded-full border border-white/80 bg-black/30 text-white backdrop-blur transition-colors group-hover:border-accent group-hover:text-accent">
+                        <svg width="20" height="20" viewBox="0 0 18 18" fill="currentColor"><path d="M5 3l10 6-10 6z" /></svg>
+                      </span>
+                    </span>
+                  </TransitionLink>
+                </Reveal>
+                <Reveal delay={200} from="right">
+                  <span className="line-draw mb-6" />
+                  <h3 className="mb-6 text-xs uppercase tracking-[0.4em] text-muted">Já aconteceu</h3>
+                  <p className="text-sm uppercase tracking-[0.35em] text-muted">{ev.titulo}</p>
+                  <h4 className="mt-3 text-4xl uppercase leading-tight tracking-[0.1em] md:text-6xl md:tracking-[0.15em]">Ver como foi</h4>
+                  <p className="mt-6 text-2xl tracking-[0.2em] md:mt-8 md:text-3xl">
+                    <span className="text-accent">{ev.data}</span> <span className="text-muted">|</span> {ev.local}
+                  </p>
+                  <p className="mt-6 max-w-md text-base leading-relaxed text-muted">
+                    Vídeos e fotos da primeira live session da ORBE. Entre e reviva a noite.{ev.youtubeId ? "" : " A session completa chega em breve no YouTube."}
+                  </p>
+                  <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+                    <TransitionLink
+                      href="/como-foi"
+                      className="block w-full border border-white px-6 py-4 text-center text-xs uppercase tracking-[0.3em] transition-colors hover:border-accent hover:bg-accent hover:text-black sm:inline-block sm:w-auto sm:px-10"
+                    >
+                      Entrar
+                    </TransitionLink>
+                    {instagram && (
+                      <a
+                        href={instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full border border-line px-6 py-4 text-center text-xs uppercase tracking-[0.3em] text-muted transition-colors hover:border-white hover:text-white sm:inline-block sm:w-auto sm:px-10"
+                      >
+                        Instagram
+                      </a>
+                    )}
+                  </div>
+                </Reveal>
+              </div>
+          </div>
+        )}
+        {outras.length === 0 && !(passou && ev) ? (
           <Reveal delay={150}>
             <p className="text-2xl text-muted md:text-4xl">Em breve.</p>
           </Reveal>
-        ) : (
+        ) : outras.length === 0 ? null : (
           <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
-            {sessoes.map((s, i) => (
+            {outras.map((s, i) => (
               <Reveal key={s.id} delay={i * 120}>
                 <article>
                   <div className="aspect-video border border-line">
