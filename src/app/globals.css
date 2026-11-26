@@ -251,16 +251,11 @@ html, body { overflow-x: hidden; overflow-x: clip; }
 }
 
 /* ---------- Página "Como foi" ---------- */
-.cf-folha {
-  position: fixed; top: 0; bottom: 0; z-index: 40; overflow: hidden; pointer-events: none;
-  width: clamp(84px, 24vw, 330px);
-}
-.cf-folha-e { left: 0; }
-.cf-folha-d { right: 0; }
-.cf-par { will-change: transform; }
-.cf-palco { position: relative; }
-.cf-fo-ent { position: absolute; animation: cfBrotar 1.7s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(.15s + var(--y) * .0007s); }
-.cf-fo { width: 100%; height: 100%; background-repeat: no-repeat; animation: cfBalanca var(--dur) ease-in-out var(--atraso) infinite; will-change: transform; }
+.cf-folhas { position: fixed; inset: 0; z-index: 40; overflow: hidden; pointer-events: none; }
+.cf-camada { position: absolute; inset: 0; will-change: transform; }
+.cf-fo-ent { position: absolute; top: var(--topo); animation: cfBrotar 1.8s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--entrada); }
+.cf-fo { width: 100%; height: 100%; animation: cfBalanca var(--dur) ease-in-out var(--atraso) infinite; will-change: transform; filter: drop-shadow(0 6px 14px rgba(0,0,0,.45)); }
+@media (max-width: 767px) { .cf-fo-ent { top: var(--topo-m); } }
 @keyframes cfBrotar { from { opacity: 0; transform: rotate(calc(var(--dir) * 26deg)) scale(.55); } to { opacity: 1; transform: none; } }
 @keyframes cfBalanca { 0%, 100% { transform: rotate(calc(var(--amp) * -1)); } 50% { transform: rotate(var(--amp)); } }
 @keyframes cfLetra { from { opacity: 0; transform: translateY(26px) scale(1.06); filter: blur(10px); } to { opacity: 1; transform: none; filter: blur(0); } }

@@ -1,83 +1,83 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import dados from "@/data/folhas.json";
 
-type Folha = (typeof dados.folhas)[number];
+// As folhas douradas da ORBE (arte original, sem fundo). Cada uma é uma peça separada: encostada na borda da
+// tela (onde o corte da imagem fica escondido), entra "brotando" e balança no próprio ritmo, girando a partir
+// do ponto onde encosta. Ao rolar a página, o conjunto desliza de leve.
+const PECAS = {
+  a: { w: 295, h: 299, py: 0.45, amp: 1.6 },
+  b: { w: 223, h: 241, py: 0.35, amp: 2.3 },
+  c: { w: 187, h: 258, py: 0.5, amp: 2.8 },
+  d: { w: 230, h: 243, py: 0.45, amp: 2.3 },
+} as const;
+type Peca = keyof typeof PECAS;
 
-// Cada folha é uma peça separada (recortada do flyer, sem fundo): entra brotando e balança no próprio
-// ritmo, girando a partir do ponto onde encosta na borda da tela. Ao rolar, o conjunto desliza de leve.
-function Lado({ lado }: { lado: "e" | "d" }) {
-  const par = useRef<HTMLDivElement>(null);
-  const palco = useRef<HTMLDivElement>(null);
-  const caixa = useRef<HTMLDivElement>(null);
-  const folhas = dados.folhas.filter((f) => f.lado === lado);
+type Folha = { lado: "e" | "d"; peca: Peca; espelho: boolean; topo: number; topoCelular?: number; largura: string; celular?: boolean };
+// Larguras em vw (com mínimo e máximo), topo em vh. "celular: false" some em telas pequenas para não cobrir o conteúdo.
+const FOLHAS: Folha[] = [
+  { lado: "e", peca: "a", espelho: false, topo: -1, topoCelular: 9, largura: "clamp(84px,19vw,340px)", celular: true },
+  { lado: "e", peca: "b", espelho: false, topo: 27, largura: "clamp(70px,12vw,250px)", celular: true },
+  { lado: "e", peca: "c", espelho: true, topo: 50, largura: "clamp(64px,11vw,220px)", celular: false },
+  { lado: "e", peca: "d", espelho: false, topo: 70, topoCelular: 83, largura: "clamp(76px,13vw,260px)", celular: true },
+  { lado: "d", peca: "a", espelho: true, topo: -1, topoCelular: 9, largura: "clamp(80px,17.5vw,320px)", celular: true },
+  { lado: "d", peca: "c", espelho: false, topo: 25, largura: "clamp(64px,11.5vw,230px)", celular: true },
+  { lado: "d", peca: "b", espelho: true, topo: 50, largura: "clamp(70px,11vw,235px)", celular: false },
+  { lado: "d", peca: "d", espelho: true, topo: 71, topoCelular: 83, largura: "clamp(76px,12.5vw,250px)", celular: true },
+];
+
+export default function Folhas() {
+  const camada = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const caixaEl = caixa.current, palcoEl = palco.current;
-    if (!caixaEl || !palcoEl) return;
-    // As coordenadas das folhas são de uma tira de 300 px; ajusta ao tamanho que ela tem na tela.
-    const ajustar = () => { palcoEl.style.transform = `scale(${caixaEl.clientWidth / dados.largura})`; };
-    ajustar();
-    const ro = new ResizeObserver(ajustar);
-    ro.observe(caixaEl);
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return () => ro.disconnect();
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let raf = 0;
     const rolar = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
-        const y = Math.min(window.scrollY * (lado === "e" ? 0.22 : 0.18), 1000);
-        if (par.current) par.current.style.transform = `translate3d(0,${-y}px,0)`;
+        if (camada.current) camada.current.style.transform = `translate3d(0,${-Math.min(window.scrollY * 0.05, 70)}px,0)`;
       });
     };
     rolar();
     window.addEventListener("scroll", rolar, { passive: true });
-    return () => { ro.disconnect(); cancelAnimationFrame(raf); window.removeEventListener("scroll", rolar); };
-  }, [lado]);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", rolar); };
+  }, []);
 
   return (
-    <div ref={caixa} className={`cf-folha ${lado === "e" ? "cf-folha-e" : "cf-folha-d"}`} aria-hidden="true">
-      <div ref={par} className="cf-par">
-        <div
-          ref={palco}
-          className="cf-palco"
-          style={{ width: dados.largura, height: dados.altura, transformOrigin: lado === "e" ? "0 0" : "100% 0", ...(lado === "d" ? { marginLeft: "auto" } : {}) }}
-        >
-          {folhas.map((f: Folha, i: number) => {
-            const h = (i * 37 + (lado === "e" ? 11 : 53)) % 100; // jeito determinístico de variar cada folha
-            const amp = Math.min(5, Math.max(1.5, 5.4 - f.area / 2200));
-            const vars = {
-              "--amp": `${amp.toFixed(2)}deg`,
-              "--dur": `${(5 + (h % 40) / 10).toFixed(1)}s`,
-              "--atraso": `${-((h * 7) % 90) / 10}s`,
-              "--dir": lado === "e" ? -1 : 1,
-              "--y": f.y,
-            } as React.CSSProperties;
-            return (
-              <div key={`${lado}-${i}`} className="cf-fo-ent" style={{ left: f.x, top: f.y, width: f.w, height: f.h, transformOrigin: `${f.px}px ${f.py}px`, ...vars }}>
-                <div
-                  className="cf-fo"
-                  style={{
-                    backgroundImage: "url(/como-foi/folhas.webp)",
-                    backgroundSize: `${dados.atlasW}px ${dados.atlasH}px`,
-                    backgroundPosition: `-${f.ax}px -${f.ay}px`,
-                    transformOrigin: `${f.px}px ${f.py}px`,
-                  }}
-                />
+    <div className="cf-folhas" aria-hidden="true">
+      <div ref={camada} className="cf-camada">
+        {FOLHAS.map((f, i) => {
+          const p = PECAS[f.peca];
+          const h = (i * 37 + 19) % 100; // variação fixa de cada folha (igual no servidor e no navegador)
+          const vars = {
+            "--amp": `${(p.amp * (0.9 + (h % 5) / 10)).toFixed(2)}deg`,
+            "--dur": `${(5.2 + (h % 35) / 10).toFixed(1)}s`,
+            "--atraso": `${-((h * 7) % 80) / 10}s`,
+            "--entrada": `${(0.2 + i * 0.16).toFixed(2)}s`,
+            "--dir": f.lado === "e" ? -1 : 1,
+            "--topo": `${f.topo}vh`,
+            "--topo-m": `${f.topoCelular ?? f.topo}vh`,
+          } as React.CSSProperties;
+          return (
+            <div
+              key={i}
+              className={`cf-fo-ent ${f.celular ? "" : "max-md:hidden"}`}
+              style={{
+                [f.lado === "e" ? "left" : "right"]: -2,
+                width: f.largura,
+                aspectRatio: `${p.w} / ${p.h}`,
+                transformOrigin: `${f.lado === "e" ? 0 : 100}% ${p.py * 100}%`,
+                ...vars,
+              }}
+            >
+              <div className="cf-fo" style={{ transformOrigin: `${f.lado === "e" ? 0 : 100}% ${p.py * 100}%` }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/como-foi/folhas/${f.peca}.webp`} alt="" width={p.w} height={p.h} draggable={false} className="block h-full w-full" style={f.espelho ? { transform: "scaleX(-1)" } : undefined} />
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
     </div>
-  );
-}
-
-export default function Folhas() {
-  return (
-    <>
-      <Lado lado="e" />
-      <Lado lado="d" />
-    </>
   );
 }
