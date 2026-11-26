@@ -275,3 +275,13 @@ html, body { overflow-x: hidden; overflow-x: clip; }
 @media (prefers-reduced-motion: reduce) {
   .cf-ia, .cf-letra { animation: none; }
 }
+
+/* Barra de carregamento da "Próxima session": enche até 50% e fica brilhando, como algo em andamento. */
+.barra-carga { position: relative; height: 6px; background: var(--line); overflow: hidden; }
+.barra-carga-fill { position: absolute; inset: 0 auto 0 0; width: 0; background: linear-gradient(90deg, #7a5a30, var(--accent)); }
+.reveal.in .barra-carga-fill { animation: barraEnche 2.6s cubic-bezier(.3,.6,.2,1) .5s forwards; }
+.barra-carga-fill::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.55) 50%, transparent 70%); transform: translateX(-100%); }
+.reveal.in .barra-carga-fill::after { animation: barraBrilho 2.4s ease-in-out 3.4s infinite; }
+@keyframes barraEnche { to { width: 50%; } }
+@keyframes barraBrilho { to { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .barra-carga-fill, .reveal.in .barra-carga-fill { animation: none; width: 50%; } .barra-carga-fill::after, .reveal.in .barra-carga-fill::after { animation: none; display: none; } }

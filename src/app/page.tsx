@@ -22,7 +22,7 @@ export default async function Home() {
   const instagram = links.instagram || process.env.NEXT_PUBLIC_INSTAGRAM || "";
 
   const nav: [string, string][] = [
-    ...(ev && !passou ? ([["Próxima", "#proxima"]] as [string, string][]) : []),
+    ...(ev ? ([["Próxima", passou ? "#proxima-session" : "#proxima"]] as [string, string][]) : []),
     ["O Orbe", "#sobre"],
     ["Sessions", "#sessions"],
     ["Participe", "#participe"],
@@ -95,6 +95,44 @@ export default async function Home() {
           <span className="scroll-cue" />
         </span>
       </section>
+
+      {ev && passou && (
+        <section id="proxima-session" className="border-t border-line px-5 py-20 sm:px-8 md:px-12 md:py-32">
+          <Reveal>
+            <div className="mx-auto max-w-5xl">
+              <p className="text-xs uppercase tracking-[0.4em] text-muted">Próxima session</p>
+              <p className="mt-4 text-3xl uppercase tracking-[0.12em] md:text-5xl md:tracking-[0.15em]">Em breve</p>
+              <div
+                role="progressbar"
+                aria-label="Próxima session em preparação"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={50}
+                className="barra-carga mt-10 max-w-2xl"
+              >
+                <span className="barra-carga-fill" />
+              </div>
+              <p className="mt-4 flex max-w-2xl justify-between text-[0.65rem] uppercase tracking-[0.3em] text-muted">
+                <span>Em preparação</span>
+                <span className="text-accent">50%</span>
+              </p>
+              <p className="mt-8 max-w-md text-base leading-relaxed text-muted">
+                A próxima live session já está sendo pensada. Acompanhe pelo Instagram para saber primeiro.
+              </p>
+              {instagram && (
+                <a
+                  href={instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-8 inline-block border border-line px-8 py-4 text-xs uppercase tracking-[0.3em] text-muted transition-colors hover:border-white hover:text-white"
+                >
+                  Seguir no Instagram
+                </a>
+              )}
+            </div>
+          </Reveal>
+        </section>
+      )}
 
       {ev && !passou && (
         <section id="proxima" className="border-t border-line px-5 py-16 sm:px-8 md:px-12 md:py-32">
