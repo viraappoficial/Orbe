@@ -41,7 +41,7 @@ function Onda({ src, peca, semente, entrada }: { src: string; peca: Peca; sement
       const p = reduz ? 1 : Math.min(1, Math.max(0, (t - inicio - entrada) / 3.6));
       const cresce = p * p * (3 - 2 * p);
       const gust = 0.7 + 0.3 * Math.sin(t * 0.37 + semente) + 0.15 * Math.sin(t * 0.91 + semente * 2);
-      const A = reduz ? 0 : gust + vento.energia * 1.9 + 1.7 * Math.pow(1 - p, 2) * Math.sin(Math.min(1, p * 1.3) * Math.PI);
+      const A = reduz ? 0 : gust + vento.energia * 0.7 + 1.7 * Math.pow(1 - p, 2) * Math.sin(Math.min(1, p * 1.3) * Math.PI);
       const f = vento.fase;
       const ax = W * 0.034 * A, ay = W * 0.03 * A;           // quanto as pontas se afastam, em pixels
       // 1ª passada: fatias verticais sobem e descem (mais forte longe do pé)
@@ -118,14 +118,15 @@ export default function Folhas() {
     let raf = 0, y0 = window.scrollY, t0 = performance.now(), vSuave = 0, incl = 0;
     const loop = (agora: number) => {
       raf = requestAnimationFrame(loop);
-      const dt = Math.max(1, agora - t0); t0 = agora;
+      const dt = Math.max(1, Math.min(100, agora - t0)); t0 = agora;
       const y = window.scrollY, v = ((y - y0) / dt) * 1000; y0 = y;           // px por segundo
-      vSuave += (v - vSuave) * 0.18;
-      const alvo = Math.max(-1, Math.min(1, vSuave / 1600));
-      incl += (alvo - incl) * 0.1;
-      vento.energia = Math.max(vento.energia * 0.955, Math.min(1, Math.abs(vSuave) / 1400));
-      vento.fase = y * 0.0065;
-      for (const a of alvos) a.style.transform = `rotate(${(incl * 2.4 * Number(a.dataset.inclina)).toFixed(3)}deg)`;
+      vSuave += (v - vSuave) * 0.05;                                            // a roda do mouse dá saltos: suaviza bastante
+      const alvo = Math.max(-1, Math.min(1, vSuave / 2600));
+      incl += (alvo - incl) * 0.045;
+      vento.energia = Math.max(vento.energia * 0.985, Math.min(0.55, Math.abs(vSuave) / 3200));
+      // a onda só "anda" devagar com a rolagem (no máximo ~0,6 rad/s) em vez de seguir cada pixel
+      vento.fase += Math.max(-1, Math.min(1, vSuave / 2200)) * 0.6 * (dt / 1000);
+      for (const a of alvos) a.style.transform = `rotate(${(incl * 1.2 * Number(a.dataset.inclina)).toFixed(3)}deg)`;
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);

@@ -153,6 +153,15 @@ export default async function ComoFoiPagina({ ev, midias }: { ev: Evento; midias
           <p className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-muted md:text-base">
             A próxima live session já está sendo pensada. Acompanhe por aqui e faça parte da comunidade.
           </p>
+          <div className="mx-auto mt-10 max-w-sm">
+            <div role="progressbar" aria-label="Próxima session em preparação" aria-valuemin={0} aria-valuemax={100} aria-valuenow={50} className="barra-carga">
+              <span className="barra-carga-fill" />
+            </div>
+            <p className="mt-3 flex justify-between text-[0.65rem] uppercase tracking-[0.3em] text-muted">
+              <span>Próxima session em preparação</span>
+              <span className="text-accent">50%</span>
+            </p>
+          </div>
           <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
             {instagram && (
               <a
