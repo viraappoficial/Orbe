@@ -256,21 +256,21 @@ html, body { overflow-x: hidden; overflow-x: clip; }
 /* c1 = 770x782 (quina de cima); c2 = 447x701 (quina de baixo). A escala vem de --s para as duas ficarem na mesma proporção. */
 .cf-ia { position: absolute; animation: cfBrotar 2.2s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--entrada); }
 .cf-p-c1 { width: calc(770 * var(--s)); } .cf-p-c2 { width: calc(447 * var(--s)); }
-.cf-ia-bal { animation: cfBalanca var(--dur) ease-in-out var(--atraso) infinite; will-change: transform; filter: drop-shadow(0 6px 12px rgba(0,0,0,.4)); }
+.cf-ia canvas { filter: drop-shadow(0 6px 12px rgba(0,0,0,.4)); }
 /* sobra de 22px para fora da tela, para o balanço nunca mostrar o corte */
 .cf-c-se { top: -22px; left: -78px; } .cf-c-sd { top: -22px; right: -78px; }
 .cf-c-ie { bottom: -22px; left: -22px; } .cf-c-id { bottom: -22px; right: -22px; }
-.cf-c-se, .cf-c-se .cf-ia-bal { transform-origin: 0 0; } .cf-c-sd, .cf-c-sd .cf-ia-bal { transform-origin: 100% 0; }
-.cf-c-ie, .cf-c-ie .cf-ia-bal { transform-origin: 0 100%; } .cf-c-id, .cf-c-id .cf-ia-bal { transform-origin: 100% 100%; }
+.cf-c-se { transform-origin: 0 0; } .cf-c-sd { transform-origin: 100% 0; }
+.cf-c-ie { transform-origin: 0 100%; } .cf-c-id { transform-origin: 100% 100%; }
 /* c1 original sai da quina de cima-esquerda; c2 original da quina de baixo-direita. Os outros cantos são espelhos. */
-.cf-c-sd img { transform: scaleX(-1); } .cf-c-ie img { transform: scaleX(-1); }
+.cf-c-sd canvas { transform: scaleX(-1); } .cf-c-ie canvas { transform: scaleX(-1); }
 @media (max-width: 767px) { .cf-camada { --s: clamp(.2px, .0525vw, .3px); } .cf-c-se { left: -64px; } .cf-c-sd { right: -64px; } }
-@keyframes cfBrotar { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: none; } }
+@keyframes cfBrotar { from { transform: scale(.78); } to { transform: none; } }
 @keyframes cfBalanca { 0%, 100% { transform: rotate(-.9deg); } 50% { transform: rotate(.9deg); } }
 @keyframes cfLetra { from { opacity: 0; transform: translateY(26px) scale(1.06); filter: blur(10px); } to { opacity: 1; transform: none; filter: blur(0); } }
 .cf-letra { display: inline-block; animation: cfLetra 1.1s cubic-bezier(.2,.7,.2,1) both; }
 .cf-trilho { scrollbar-width: none; }
 .cf-trilho::-webkit-scrollbar { display: none; }
 @media (prefers-reduced-motion: reduce) {
-  .cf-ia, .cf-ia-bal, .cf-brilho, .cf-letra { animation: none; }
+  .cf-ia, .cf-letra { animation: none; }
 }
