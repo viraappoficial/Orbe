@@ -2,15 +2,15 @@
 
 import { useEffect, useRef } from "react";
 
-// Folhas douradas da arte da ORBE, só duas por lado (as outras poluíam). O corte reto de cada conjunto fica
-// escondido para fora da tela, então não aparece linha nenhuma. Entram "brotando" e balançam de leve.
-// A de cima (d) fica encostada na borda esquerda/direita; a de baixo (a) no canto inferior.
-type Folha = { lado: "e" | "d"; peca: "d" | "a"; dur: number; atraso: number; entrada: number };
+// Folhas douradas da arte da ORBE, uma em cada canto da tela (duas peças, espelhadas). Cada peça já nasce
+// encostada na quina, então o corte reto da imagem fica escondido fora da tela. Entram "brotando" e balançam
+// de leve a partir da quina. Ao rolar a página, deslizam um pouco.
+type Folha = { canto: "se" | "sd" | "ie" | "id"; peca: "c1" | "c2"; dur: number; atraso: number; entrada: number };
 const FOLHAS: Folha[] = [
-  { lado: "e", peca: "d", dur: 8.2, atraso: -1.5, entrada: 0.2 },
-  { lado: "d", peca: "d", dur: 9.1, atraso: -4.6, entrada: 0.4 },
-  { lado: "e", peca: "a", dur: 9.4, atraso: -2.8, entrada: 0.6 },
-  { lado: "d", peca: "a", dur: 8.0, atraso: -5.7, entrada: 0.8 },
+  { canto: "se", peca: "c1", dur: 8.6, atraso: -1.5, entrada: 0.2 },
+  { canto: "sd", peca: "c1", dur: 9.6, atraso: -5.0, entrada: 0.4 },
+  { canto: "id", peca: "c2", dur: 8.9, atraso: -2.8, entrada: 0.6 },
+  { canto: "ie", peca: "c2", dur: 8.2, atraso: -6.1, entrada: 0.8 },
 ];
 
 export default function Folhas() {
@@ -36,8 +36,8 @@ export default function Folhas() {
         {FOLHAS.map((f, i) => (
           <div
             key={i}
-            className={`cf-ia cf-ia-${f.lado} cf-p-${f.peca}`}
-            style={{ "--dur": `${f.dur}s`, "--atraso": `${f.atraso}s`, "--entrada": `${f.entrada}s`, "--dir": f.lado === "e" ? -1 : 1 } as React.CSSProperties}
+            className={`cf-ia cf-c-${f.canto} cf-p-${f.peca}`}
+            style={{ "--dur": `${f.dur}s`, "--atraso": `${f.atraso}s`, "--entrada": `${f.entrada}s` } as React.CSSProperties}
           >
             <div className="cf-ia-bal">
               {/* eslint-disable-next-line @next/next/no-img-element */}

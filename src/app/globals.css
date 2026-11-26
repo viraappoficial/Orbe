@@ -252,20 +252,21 @@ html, body { overflow-x: hidden; overflow-x: clip; }
 
 /* ---------- Página "Como foi" ---------- */
 .cf-folhas { position: fixed; inset: 0; z-index: 40; overflow: hidden; pointer-events: none; }
-.cf-camada { position: absolute; inset: 0; will-change: transform; }
-.cf-ia { position: absolute; animation: cfBrotar 2s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--entrada); }
+.cf-camada { position: absolute; inset: 0; will-change: transform; --s: clamp(.26px, .0312vw, .56px); }
+/* c1 = 770x782 (quina de cima); c2 = 447x701 (quina de baixo). A escala vem de --s para as duas ficarem na mesma proporção. */
+.cf-ia { position: absolute; animation: cfBrotar 2.2s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--entrada); }
+.cf-p-c1 { width: calc(770 * var(--s)); } .cf-p-c2 { width: calc(447 * var(--s)); }
 .cf-ia-bal { animation: cfBalanca var(--dur) ease-in-out var(--atraso) infinite; will-change: transform; filter: drop-shadow(0 6px 12px rgba(0,0,0,.4)); }
-.cf-ia-e { left: -8px; } .cf-ia-d { right: -8px; }
-.cf-ia-e, .cf-ia-e .cf-ia-bal { transform-origin: 0% 50%; } .cf-ia-d, .cf-ia-d .cf-ia-bal { transform-origin: 100% 50%; }
-.cf-ia-d img { transform: scaleX(-1); }
-/* de cima: conjunto D, encostado na lateral */
-.cf-ia-e.cf-p-d, .cf-ia-d.cf-p-d { top: 12vh; width: clamp(96px, 14vw, 240px); }
-/* de baixo: conjunto A, com o corte de baixo escondido abaixo da tela */
-.cf-ia-e.cf-p-a, .cf-ia-d.cf-p-a { bottom: -22px; width: clamp(116px, 18vw, 310px); }
-.cf-ia-e.cf-p-a, .cf-ia-e.cf-p-a .cf-ia-bal { transform-origin: 0% 90%; } .cf-ia-d.cf-p-a, .cf-ia-d.cf-p-a .cf-ia-bal { transform-origin: 100% 90%; }
-@media (max-width: 767px) { .cf-ia-e.cf-p-d, .cf-ia-d.cf-p-d { top: 11vh; width: 26vw; } .cf-ia-e.cf-p-a, .cf-ia-d.cf-p-a { width: 33vw; bottom: -18px; } }
-@keyframes cfBrotar { from { opacity: 0; transform: rotate(calc(var(--dir) * 18deg)) scale(.65); } to { opacity: 1; transform: none; } }
-@keyframes cfBalanca { 0%, 100% { transform: rotate(-1.4deg); } 50% { transform: rotate(1.4deg); } }
+/* sobra de 22px para fora da tela, para o balanço nunca mostrar o corte */
+.cf-c-se { top: -22px; left: -78px; } .cf-c-sd { top: -22px; right: -78px; }
+.cf-c-ie { bottom: -22px; left: -22px; } .cf-c-id { bottom: -22px; right: -22px; }
+.cf-c-se, .cf-c-se .cf-ia-bal { transform-origin: 0 0; } .cf-c-sd, .cf-c-sd .cf-ia-bal { transform-origin: 100% 0; }
+.cf-c-ie, .cf-c-ie .cf-ia-bal { transform-origin: 0 100%; } .cf-c-id, .cf-c-id .cf-ia-bal { transform-origin: 100% 100%; }
+/* c1 original sai da quina de cima-esquerda; c2 original da quina de baixo-direita. Os outros cantos são espelhos. */
+.cf-c-sd img { transform: scaleX(-1); } .cf-c-ie img { transform: scaleX(-1); }
+@media (max-width: 767px) { .cf-camada { --s: clamp(.2px, .0525vw, .3px); } .cf-c-se { left: -64px; } .cf-c-sd { right: -64px; } }
+@keyframes cfBrotar { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: none; } }
+@keyframes cfBalanca { 0%, 100% { transform: rotate(-.9deg); } 50% { transform: rotate(.9deg); } }
 @keyframes cfLetra { from { opacity: 0; transform: translateY(26px) scale(1.06); filter: blur(10px); } to { opacity: 1; transform: none; filter: blur(0); } }
 .cf-letra { display: inline-block; animation: cfLetra 1.1s cubic-bezier(.2,.7,.2,1) both; }
 .cf-trilho { scrollbar-width: none; }
